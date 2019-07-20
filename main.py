@@ -3,9 +3,8 @@ from Json.JSON import JSON
 
 
 def main():
-    GUI()
     json = JSON()
     graph = json.Read()
-
+    GUI(graph)
 
 main()

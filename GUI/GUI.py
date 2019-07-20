@@ -1,15 +1,17 @@
 import pygame
 import subprocess
 import os
+import sys
 import ctypes
 from Json.JSON import JSON
+from random import randint
 pygame.init()
 
 
 class GUI:
-    def __init__(self):
+    def __init__(self, graph):
+        self.graph = graph
         self.draw()
-        self.graph = JSON()
 
     def screen_size(self):
         size = (None, None)
@@ -24,14 +26,64 @@ class GUI:
 
     def draw(self):
         screen = pygame.display.set_mode(self.screen_size())
-        circle = pygame.draw.circle(screen, (0, 0, 0), (10, 20), 1)
-
+        country = pygame.image.load("Imgs/city.png")
+        country = pygame.transform.scale(country, (25, 25))
+        self.positions()
         while True:
             for event in pygame.event.get():
                 if event.type is pygame.QUIT:
                     pygame.quit()
+                    sys.exit()
             screen.fill((96, 202, 107))
-            for i in range(0, len(self.graph.places)):
-                self.graph.places[i] = screen.blit(circle, 100+i, 200+i)
+
+            for edge in self.graph.edges:
+                initX = edge.vertexA.x
+                initY = edge.vertexA.y
+                desX = edge.vertexB.x
+                desY = edge.vertexB.y
+                pygame.draw.line(screen, (0, 0, 0),
+                                 (initX+10, initY+10), (desX+10, desY+10), 5)
+
+            for place in self.graph.places:
+                screen.blit(
+                    country, (place.x, place.y))
 
             pygame.display.update()
+
+    def positions(self):
+        size = self.screen_size()
+        i = 0
+        while i < len(self.graph.places):
+            place = self.graph.places[i]
+            posx = randint(0, size[0]-100)
+            posy = randint(0, size[1]-100)
+            if place is self.graph.places[0]:
+                place.x = posx
+                place.y = posy
+            elif self.dont_hover(posx, posy):
+                place.x = posx
+                place.y = posy
+            else:
+                i = i - 1
+            i = i+1
+
+    def dont_hover(self, x, y):
+        pas = True
+        for place in self.graph.places:
+            if x == place.x and y == place.y:
+                pas = False
+                break
+            elif x + 50 == place.x and y + 50 == place.y:
+                pas = False
+                break
+            elif x + 50 == place.x and y - 50 == place.y:
+                pas = False
+                break
+            elif x - 50 == place.x and y + 50 == place.y:
+                pas = False
+                break
+            elif x - 50 == place.x and y - 50 == place.y:
+                pas = False
+                break
+
+        return pas

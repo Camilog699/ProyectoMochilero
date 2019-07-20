@@ -8,20 +8,34 @@ class Graph:
         self.edges = []
 
     def Get_Vertex(self, id):
-        if self.Exist(id):
-            return self.places[id]
-        return None
-
-    def Exist(self, id):
-        return id in self.places[id]
+        for place in self.places:
+            if place.label is id:
+                return place
 
     def add_place(self, label, name, mintime, jobs, thingtodo):
         newplace = Place(label, name, mintime, jobs, thingtodo)
-        if newplace not in self.places:
+        pas = True
+        for place in self.places:
+            if newplace == place:
+                pas = False
+
+        if pas:
             self.places.append(newplace)
 
     def add_edge(self, value, vertexA, vertexB, forms):
         newedge = Edge(value, vertexA, vertexB, forms)
-        if newedge not in self.edges:
+        newedgeB = Edge(value, vertexA, vertexB, forms)
+        pas = True
+        pas1 = False
+        for edge in self.edges:
+            if newedge == edge:
+                pas = False
+            if newedgeB == edge:
+                pas1 = True
+                edge.isbi = True
+
+        if pas1:
+            vertexA.goings.append(vertexB)
+        if pas and not pas1:
             self.edges.append(newedge)
-            vertexA.goingto.append(vertexB)
+            vertexA.goings.append(vertexB)

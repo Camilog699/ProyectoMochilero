@@ -43,21 +43,24 @@ class JSON:
                 gain = job["gain"]
                 timej = job["time"]
                 newJob = Jobs(namej, gain, timej)
-                self.jobs.append(newJob)
+                jobs.append(newJob)
             for thing in place["things_to_do"]:
                 namet = thing["name"]
                 cost = thing["cost"]
                 timet = thing["time"]
                 type = thing["type"]
                 newThing = Things(namet, cost, timet, type)
-                self.things.append(newThing)
+                things.append(newThing)
+            self.graph.add_place(label, name, minTimeHere, jobs, things)
 
         for node in data['places']:
             for goingto in node['goingTo']:
                 forms = []
                 for transport in self.transports:
-                    for t in goingto['transportForm']:
+                    for t in goingto['transportForms']:
                         if transport.id == t:
                             forms.append(transport)
                 self.graph.add_edge(goingto['travelDistance'], self.graph.Get_Vertex(
                     node['label']),  self.graph.Get_Vertex(goingto['label']), forms)
+
+        return self.graph
