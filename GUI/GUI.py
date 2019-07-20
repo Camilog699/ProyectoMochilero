@@ -28,6 +28,10 @@ class GUI:
         screen = pygame.display.set_mode(self.screen_size())
         country = pygame.image.load("Imgs/city.png")
         country = pygame.transform.scale(country, (85, 60))
+
+        # Fonts
+        fuente = pygame.font.SysFont("Comit Sans Ms", 16)
+
         self.positions()
         while True:
             for event in pygame.event.get():
@@ -45,10 +49,9 @@ class GUI:
                                  (initX+20, initY+40), (desX+20, desY+40), 5)
 
             for place in self.graph.places:
-                name = place.name
-                screen.blit(
-                    country, (place.x, place.y))
-                screen.blit(name, (place.x+20, place.y+40))
+                screen.blit(country, (place.x, place.y))
+                placeFont = fuente.render(place.name, True, (255, 255, 255))
+                screen.blit(placeFont, (place.x+30, place.y+60))
 
             pygame.display.update()
 
