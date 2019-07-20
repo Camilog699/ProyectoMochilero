@@ -27,7 +27,7 @@ class GUI:
     def draw(self):
         screen = pygame.display.set_mode(self.screen_size())
         country = pygame.image.load("Imgs/city.png")
-        country = pygame.transform.scale(country, (25, 25))
+        country = pygame.transform.scale(country, (85, 60))
         self.positions()
         while True:
             for event in pygame.event.get():
@@ -42,11 +42,13 @@ class GUI:
                 desX = edge.vertexB.x
                 desY = edge.vertexB.y
                 pygame.draw.line(screen, (0, 0, 0),
-                                 (initX+10, initY+10), (desX+10, desY+10), 5)
+                                 (initX+20, initY+40), (desX+20, desY+40), 5)
 
             for place in self.graph.places:
+                name = place.name
                 screen.blit(
                     country, (place.x, place.y))
+                screen.blit(name, (place.x+20, place.y+40))
 
             pygame.display.update()
 
