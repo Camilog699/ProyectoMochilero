@@ -1,11 +1,13 @@
 from Resources.places import Place
 from Resources.edge import Edge
+from Resources.algorithms import Algorithms
 
 
 class Graph:
     def __init__(self):
         self.places = []
         self.edges = []
+        self.visited = []
 
     def Get_Vertex(self, id):
         for place in self.places:
@@ -39,3 +41,25 @@ class Graph:
         if pas and not pas1:
             self.edges.append(newedge)
             vertexA.goings.append(vertexB)
+
+    def min_whit_money(self):
+        pass
+
+    def BFS(self):
+        self.visited.clear()
+        self.visited = Algorithms().BFS(self.visited, [self.places[0]])
+
+    def DFS(self):
+        self.visited.clear()
+        self.visited = Algorithms().DFS(self.visited, self.places[0])
+
+    def Dijkstra(self):
+        self.edges = Algorithms().Dijkstra(self.Get_Vertex("A"), self.edges, True)
+        show = []
+        for edge in self.edges:
+            if edge.vertexA not in show:
+                print(edge.vertexA.status)
+                show.append(edge.vertexA)
+            if edge.vertexB not in show:
+                print(edge.vertexB.status)
+                show.append(edge.vertexB)
