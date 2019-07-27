@@ -15,3 +15,11 @@ class ButtonP(pygame.sprite.Sprite):
         self.x = x
         self.y = y
 
+    # With this methos the button image is update according to the cursor position.
+    def update(self, screen, cursor, add):
+        if cursor.colliderect(self.rect):
+            self.current = self.selection
+        else:
+            self.current = self.normal
+        screen.blit(self.current, self.rect)
+        screen.blit(add, (self.x + 10, self.y + 10))

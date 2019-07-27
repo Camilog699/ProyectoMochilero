@@ -6,7 +6,7 @@ from Resources.algorithms import Algorithms
 def main():
     json = JSON()
     graph = json.Read()
-    # GUI(graph)
-    graph.Dijkstra()
+    GUI(graph)
+    #graph.Dijkstra()
 
 main()

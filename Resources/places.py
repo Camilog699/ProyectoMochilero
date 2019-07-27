@@ -12,7 +12,7 @@ class Place:
         self.x = 0
         self.y = 0
         self.status= [inf, None]
-        self.rect = Rect(0, 0, 85, 60)
+        self.rect = Rect(0, 0, 110, 90)
 
     def __eq__(self, place):
         return (self.label == place.label and self.name == place.name and
