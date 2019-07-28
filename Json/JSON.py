@@ -61,6 +61,6 @@ class JSON:
                         if transport.id == t:
                             forms.append(transport)
                 self.graph.add_edge(goingto['travelDistance'], self.graph.Get_Vertex(
-                    node['label']),  self.graph.Get_Vertex(goingto['label']), forms)
+                    node['label']), self.graph.Get_Vertex(goingto['label']), forms)
 
         return self.graph

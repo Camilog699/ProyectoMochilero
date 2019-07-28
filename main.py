@@ -10,5 +10,4 @@ def main():
     GUI(graph)
     #graph.Dijkstra()
 
-
 main()

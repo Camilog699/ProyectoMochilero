@@ -1,5 +1,6 @@
 from pygame import Rect
 
+
 class Edge:
     def __init__(self, value, vertexA, vertexB, forms):
         self.value = value
@@ -7,11 +8,13 @@ class Edge:
         self.vertexB = vertexB
         self.forms = forms
         self.isbi = False
+        self.obs = False
+        self.linea = None
         self.rect = (vertexA.rect.x, vertexA.rect.y, 20, 20)
 
     def __eq__(self, edge):
         return (self.value == edge.value and self.vertexA == edge.vertexA and
                 self.vertexB == edge.vertexB and self.forms == edge.forms)
-    
+
     def __lt__(self, edge):
         return self.value < edge.value

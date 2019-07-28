@@ -23,7 +23,7 @@ class Algorithms:
             visited = self.DFS(visited, adjacency)
         return visited
 
-    def Dijkstra(self, placeA, places, edges, edgesOrigin, state, visitPlaces):
+    def Dijkstra(self, placeA, places, edges, edgesOrigin, state, visitPlaces, minCost, minT):
         temp = []
         visited = []
         minplace = None
