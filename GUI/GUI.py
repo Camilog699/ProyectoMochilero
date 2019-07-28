@@ -60,8 +60,9 @@ class GUI:
         car = pygame.transform.scale(car, (50, 30))
         posx = 0
         posy = 0
-        speed = 1
+        speed = 2
         right = True
+        up = True
 
         while True:
             screen.fill((0, 105, 155))
@@ -72,22 +73,101 @@ class GUI:
                             right = True
                             posx = place.x
                             posy = place.y
+                            # Analiza su primera adyacencia
+                            adj = place.goings[0]
+                            init = place
                             self.MinMoney = True
                 if event.type is pygame.QUIT:
                     pygame.quit()
                     sys.exit()
             if self.MinMoney:
                 screen.blit(car, (posx, posy))
-                if right:
-                    if posx < 1300:
-                        posx += speed
+                #self.recursive([], init)
+
+                # ___________________Optimo___________________________________
+
+                if posx < adj.x:
+                    posx += speed
+                if posx > adj.x:
+                    posx -= speed
+                if posx == adj.x:
+                    if posy > adj.y:
+                        posy -= speed
+                    if posy < adj.y:
+                        posy += speed
+
+                # _________________Medio Codigo___________________________
+
+                """if posx < adj.x:
+                    posx += speed
+                if posx > adj.x:
+                    posx -= speed
+                if posx == adj.x:
+                    if up:
+                        if posy > adj.y:
+                            posy -= speed
+                        if posy < adj.y:
+                            posy += speed
+                        if posy == adj.y:
+                            up = False
                     else:
+                        if posy < adj.y:
+                            posy += speed
+                        if posy > adj.y:
+                            posy -= speed
+                        if posy == adj.y:
+                            up = True
+
+                # __________________________mierda_____________________
+
+                if posx is adj.x:
+                    right = False
+                if posy is adj.y:
+                    up = False
+
+                if right:
+                    if posx < adj.x:
+                        posx += speed
+                    if posx > adj.x:
+                        posx -= speed
+                    if posx == adj.x:
+                        if up:
+                            if posy > adj.y:
+                                posy -= speed
+                            if posy < adj.y:
+                                posy += speed
+                            if posy == adj.y:
+                                up = False
+                        else:
+                            if posy < adj.y:
+                                posy += speed
+                            if posy > adj.y:
+                                posy -= speed
+                            if posy == adj.y:
+                                up = True
                         right = False
                 else:
-                    if posx > 1:
+                    if posx > adj.x:
                         posx -= speed
-                    else:
-                        right = True
+                    if posx < adj.x:
+                        posx += speed
+                    if posx == adj.x:
+                        if up:
+                            if posy > adj.y:
+                                posy -= speed
+                            if posy < adj.y:
+                                posy += speed
+                            if posy == adj.y:
+                                up = False
+                        else:
+                            if posy < adj.y:
+                                posy += speed
+                            if posy > adj.y:
+                                posy -= speed
+                            if posy == adj.y:
+                                up = True
+                        right = True"""
+
             cursor.update()
             button1.update(screen, cursor, MinMoneyLabel)
             self.draw_graph(screen, country, fontD, fontP)
@@ -169,3 +249,28 @@ class GUI:
             place.rect.y = place.y - 50
             screen.blit(fontP.render(
                 f"{place.name}", True, (255, 255, 255)), (place.x - 30, place.y + 12))
+
+
+    #Modificar
+    def recursive(self, visited, init):
+        if len(visited) is len(self.graph.places):
+            return
+        visited.append(init)
+        speed = 4
+        for place in self.graph.places:
+            posx = place.x
+            posy = place.y
+            # Analiza su primera adyacencia
+            adjs = place.goings
+
+            for adj in adjs:
+                if posx < adj.x:
+                    posx += speed
+                if posx > adj.x:
+                    posx -= speed
+                if posx == adj.x:
+                    if posy > adj.y:
+                        posy -= speed
+                    if posy < adj.y:
+                        posy += speed
+            self.recursive(visited, adj)
