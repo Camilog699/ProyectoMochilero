@@ -1,6 +1,7 @@
 from math import inf
 from Resources.places import Place
 
+
 class Algorithms:
 
     def BFS(self, visited, trail):
@@ -22,34 +23,28 @@ class Algorithms:
             visited = self.DFS(visited, adjacency)
         return visited
 
-    def Dijkstra(self, placeA, edges, state):
-        if not state:
-            return edges
+    def Dijkstra(self, placeA, places, edges, edgesOrigin, state, visitPlaces):
         temp = []
-        minplace = Place('', '', 0, [], [])
+        visited = []
+        minplace = None
         minvalue = inf
-        change = False
-        for edge in edges:
-            if edge.vertexA is placeA or edge.vertexB is placeA:
+        i = 0
+        visitPlaces.append(placeA)
+        if len(visitPlaces) == len(places):
+            return visitPlaces
+        for edge in edgesOrigin:
+            if edge.vertexA is placeA:
                 temp.append(edge)
+                edges.append(edge)
         for edge in temp:
-            if placeA is edge.vertexA:
-                if (edge.vertexA.status[0] + edge.value) < edge.vertexB.status[0]:
-                    edge.vertexB.status[0] = edge.vertexA.status[0] + edge.value
-                    edge.vertexB.status[1] = edge.vertexA
-                    state = True
-                else:
-                    state = False
-            else:
-                if (edge.vertexB.status[0] + edge.value) < edge.vertexA.status[0]:
-                    edge.vertexA.status[0] = edge.vertexB.status[0] + edge.value
-                    edge.vertexA.status[1] = edge.vertexA
-                    state = True
-                else:
-                    state = False
-        for place in placeA.goings:
-            if place.status[0] < minvalue:
-                minvalue = place.status[0]
-                minplace = place
-        edges = self.Dijkstra(minplace, edges, state)
-        return edges
+            if (edge.vertexA.status[0] + edge.value) < edge.vertexB.status[0]:
+                edge.vertexB.status[0] = edge.vertexA.status[0] + edge.value
+                edge.vertexB.status[1] = edge.vertexA.label
+        for edge in edges:
+            if edge.vertexB.status[0] < minvalue and edge.vertexB not in visitPlaces:
+                minvalue = edge.vertexB.status[0]
+                minplace = edge.vertexB
+        visited.append(minplace)
+        visitPlaces = self.Dijkstra(
+            minplace, places, edges, edgesOrigin, state, visitPlaces)
+        return visitPlaces

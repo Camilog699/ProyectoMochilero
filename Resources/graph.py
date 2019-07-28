@@ -54,12 +54,17 @@ class Graph:
         self.visited = Algorithms().DFS(self.visited, self.places[0])
 
     def Dijkstra(self):
-        self.edges = Algorithms().Dijkstra(self.Get_Vertex("A"), self.edges, True)
+        self.visited.clear()
+        vertex = self.Get_Vertex('A')
+        vertex.status[0] = 0
+        vertex.status[1] = vertex.label
+        self.visited = Algorithms().Dijkstra(
+            vertex, self.places, [], self.edges, True, self.visited)
         show = []
         for edge in self.edges:
             if edge.vertexA not in show:
-                print(edge.vertexA.status)
+                print(f"{edge.vertexA.label} = {edge.vertexA.status}")
                 show.append(edge.vertexA)
             if edge.vertexB not in show:
-                print(edge.vertexB.status)
+                print(f"{edge.vertexB.label} = {edge.vertexB.status}")
                 show.append(edge.vertexB)
