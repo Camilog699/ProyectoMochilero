@@ -76,8 +76,9 @@ class GUI:
                 if event.type is pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+            self.draw_graph(screen, country, fontD, fontP)
             if self.MinMoney:
-                screen.blit(car, (posx, posy))
+                screen.blit(car, (posx, posy - 15))
                 if right:
                     if posx < 1300:
                         posx += speed
@@ -90,7 +91,6 @@ class GUI:
                         right = True
             cursor.update()
             button1.update(screen, cursor, MinMoneyLabel)
-            self.draw_graph(screen, country, fontD, fontP)
             pygame.display.update()
 
     def position(self):
@@ -151,7 +151,7 @@ class GUI:
             if edge not in showedge:
                 showedge.append(edge)
                 pygame.draw.line(screen, (0, 0, 0), (edge.vertexA.x,
-                                                     edge.vertexA.y), (edge.vertexB.x, edge.vertexB.y))
+                                                     edge.vertexA.y), (edge.vertexB.x, edge.vertexB.y), 10)
                 if edge.vertexA.y == edge.vertexB.y:
                     posfontD = (
                         (((edge.vertexA.x + edge.vertexB.x) / 2) - 10, edge.vertexA.y - 20))
