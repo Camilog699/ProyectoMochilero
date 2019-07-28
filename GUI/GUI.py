@@ -6,13 +6,15 @@ import ctypes
 from Json.JSON import JSON
 from random import randint
 from Views.cursor import Cursor
+from Views.button import ButtonP
 pygame.init()
 
 
 class GUI:
     def __init__(self, graph):
         self.graph = graph
-        self.cursor= Cursor()
+        self.cursor = Cursor()
+        self.MinMoney = False
         self.draw()
 
     def screen_size(self):
@@ -25,7 +27,7 @@ class GUI:
                 if "Screen" in line:
                     size = (int(line.split()[7]), int(line.split()[9][:-1]))
         return size
-    
+
     def draw(self):
         # Places position
         self.position()
@@ -37,17 +39,57 @@ class GUI:
         # fontDs
         fontD = pygame.font.SysFont("Times new Roman", 11)
         fontP = pygame.font.SysFont("Times new Roman", 20)
-        
+
+        # labels to use
+        MinMoneyLabel = fontD.render("Way whit minMoney", True, (0, 0, 0))
+
         # images
         country = pygame.image.load("Imgs/city.png")
         country = pygame.transform.scale(country, (85, 60))
+        image1 = pygame.image.load("Imgs/boton1.png")
+        image1 = pygame.transform.scale(image1, (130, 60))
+
+        # Buttons
+        button1 = ButtonP(image1, image1, 40, 40)
+
+        # main elements
+        cursor = Cursor()
+
+        # elements by animation
+        car = pygame.image.load("Imgs/car.png")
+        car = pygame.transform.scale(car, (50, 30))
+        posx = 0
+        posy = 0
+        speed = 1
+        right = True
 
         while True:
+            screen.fill((0, 105, 155))
             for event in pygame.event.get():
+                if event.type is pygame.MOUSEBUTTONDOWN:
+                    for place in self.graph.places:
+                        if cursor.colliderect(place.rect):
+                            right = True
+                            posx = place.x
+                            posy = place.y
+                            self.MinMoney = True
                 if event.type is pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-            screen.fill((0, 105, 155))
+            if self.MinMoney:
+                screen.blit(car, (posx, posy))
+                if right:
+                    if posx < 1300:
+                        posx += speed
+                    else:
+                        right = False
+                else:
+                    if posx > 1:
+                        posx -= speed
+                    else:
+                        right = True
+            cursor.update()
+            button1.update(screen, cursor, MinMoneyLabel)
             self.draw_graph(screen, country, fontD, fontP)
             pygame.display.update()
 
@@ -123,5 +165,7 @@ class GUI:
                     f"{edge.value}", True, (0, 0, 0)), posfontD)
         for place in self.graph.places:
             screen.blit(country, (place.x - 40, place.y - 50))
+            place.rect.x = place.x - 40
+            place.rect.y = place.y - 50
             screen.blit(fontP.render(
                 f"{place.name}", True, (255, 255, 255)), (place.x - 30, place.y + 12))

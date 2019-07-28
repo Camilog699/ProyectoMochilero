@@ -7,8 +7,8 @@ from math import inf
 def main():
     json = JSON()
     graph = json.Read()
-    # GUI(graph)
-    graph.Dijkstra()
+    GUI(graph)
+    #graph.Dijkstra()
 
 
 main()
