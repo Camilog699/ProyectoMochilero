@@ -82,7 +82,7 @@ class GUI:
                     sys.exit()
             self.draw_graph(screen, country, fontD, fontP)
             if self.MinMoney:
-                screen.blit(car, (posx, posy))
+                screen.blit(car, (posx - 10, posy - 15))
                 #self.recursive([], init)
 
                 # ___________________Optimo___________________________________
@@ -250,8 +250,8 @@ class GUI:
             screen.blit(fontP.render(
                 f"{place.name}", True, (255, 255, 255)), (place.x - 30, place.y + 12))
 
+    # Modificar
 
-    #Modificar
     def recursive(self, visited, init):
         if len(visited) is len(self.graph.places):
             return
