@@ -82,7 +82,6 @@ class GUI:
                     sys.exit()
             self.draw_graph(screen, country, fontD, fontP)
             if self.MinMoney:
-<<<<<<< HEAD
                 screen.blit(car, (posx, posy))
                 #self.recursive([], init)
 
@@ -127,9 +126,6 @@ class GUI:
                 if posy is adj.y:
                     up = False
 
-=======
-                screen.blit(car, (posx, posy - 15))
->>>>>>> 56ec68b5587a9c9daf2d6aadd5b065f45982c8d8
                 if right:
                     if posx < adj.x:
                         posx += speed
