@@ -22,4 +22,4 @@ class ButtonP(pygame.sprite.Sprite):
         else:
             self.current = self.normal
         screen.blit(self.current, self.rect)
-        screen.blit(add, (self.x + 10, self.y + 10))
+        screen.blit(add, (self.x + 20, self.y + 22))
