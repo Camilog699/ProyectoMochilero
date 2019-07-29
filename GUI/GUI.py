@@ -105,9 +105,16 @@ class GUI:
         Tr1 = None
         Tr2 = None
         Tr3 = None
+        days = 0
         hour = 0
         minutes = 0
         seconds = 0
+        cont = 0
+        daysR = 0
+        hourR = 0
+        minutesR = 0
+        secondsR = 0
+        contR = 0
 
         while True:
             screen.fill((0, 105, 155))
@@ -136,6 +143,20 @@ class GUI:
                             f"430x260+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
                         screenTK3.title(
                             "Travel way")
+                        self.time = IntVar()
+                        self.cost = IntVar()
+                        textC = StringVar(
+                            value="Write the backpacker budget.")
+                        labelC = Label(
+                            screenTK2, textvariable=textC).place(x=5, y=10)
+                        Cost_field = Entry(
+                            screenTK2, textvariable=self.cost, width=25).place(x=10, y=30)
+                        textT = StringVar(
+                            value="Write the trip time.")
+                        labelT = Label(
+                            screenTK1, textvariable=textT).place(x=200, y=10)
+                        Time_field = Entry(
+                            screenTK1, textvariable=self.time, width=25).place(x=210, y=30)
                         Button(screenTK3, text="Way with the minimun cost",
                                command=lambda: self.start(screenTK3, 1)).place(x=20, y=50)
                         Button(screenTK3, text="Way with the minimun time",
@@ -163,9 +184,6 @@ class GUI:
                             f"430x110+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
                         screenTK1.title(
                             "Way whit the minimun time")
-                        self.time = IntVar()
-                        textT = StringVar(
-                            value="Write the trip time.")
                         labelT = Label(
                             screenTK1, textvariable=textT).place(x=200, y=10)
                         Time_field = Entry(
@@ -365,21 +383,35 @@ class GUI:
             if self.other:
                 screen.blit(Select2, (10, 650))
                 self.ini = True
-            screen.blit(fontH.render(
-                f"{hour}:{minutes}:{seconds}", True, (0, 0, 0)), (1000, 20))
-            if hour == 12 and minutes == 60 and seconds == 60:
+            screen.blit(fontP.render("Current Time:",
+                                     True, (0, 0, 0)), (1000, 10))
+            screen.blit(fontP.render(
+                f"{days} days {hour}:{minutes}:{seconds}", True, (0, 0, 0)), (1000, 30))
+            if hour == 12 and minutes == 60:
+                minutes = 0
+                seconds = 0
                 hour = 1
-                minutes = 0
-                seconds = 0
-            elif seconds < 60:
-                seconds += 1
-            elif seconds == 60:
-                seconds = 0
-                minutes += 1
-            elif minutes == 60:
-                minutes = 0
+            if hour == 11 and minutes == 60:
                 hour += 1
-
+                minutes = 0
+                seconds = 0
+                cont += 1
+            elif hour < 13 and minutes == 60:
+                hour += 1
+                minutes = 0
+                seconds = 0
+            elif hour < 13 and minutes < 60 and seconds == 60:
+                minutes += 1
+                seconds = 0
+            elif hour < 13 and minutes < 60 and seconds < 60:
+                seconds += 1
+            if cont == 2:
+                days += 1
+                cont = 0
+            screen.blit(fontP.render("Remaining Time:",
+                                     True, (0, 0, 0)), (1170, 10))
+            screen.blit(fontP.render(
+                f"{daysR} days  {hourR}:{minutesR}:{secondsR}", True, (0, 0, 0)), (1170, 30))
             cursor.update()
             button1.update(screen, cursor, MinMoneyLabel)
             button2.update(screen, cursor, Obs)
