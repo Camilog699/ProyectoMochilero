@@ -9,5 +9,4 @@ def main():
     graph = json.Read()
     GUI(graph)
 
-
 main()
