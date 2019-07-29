@@ -59,6 +59,7 @@ class GUI:
         fontD = pygame.font.SysFont("Times new Roman", 11)
         fontP = pygame.font.SysFont("Times new Roman", 20)
         fontM = pygame.font.SysFont("Times new Roman", 50)
+        fontH = pygame.font.SysFont("Times new Roman", 30)
 
         # labels to use
         MinMoneyLabel = fontD.render("Minimun roads", True, (0, 0, 0))
@@ -100,6 +101,9 @@ class GUI:
         Tr1 = None
         Tr2 = None
         Tr3 = None
+        hour = 0
+        minutes = 0
+        seconds = 0
 
         while True:
             screen.fill((0, 105, 155))
@@ -287,12 +291,22 @@ class GUI:
                 if self.MinMoney:
                     pos = self.transportMove(self.init, self.destiny, pos)
             if self.begin:
-                screen.blit(Select, (self.screen_size()[
-                    0]/2, 10))
+                screen.blit(Select, (200, 10))
             if self.other:
-                screen.blit(Select2, (self.screen_size()[
-                    0]/2, 10))
+                screen.blit(Select2, (200, 10))
                 self.ini = True
+            screen.blit(fontH.render(f"{hour}:{minutes}:{seconds}", True, (0, 0, 0)), (1000, 20))
+            if hour == 12 and minutes == 60 and seconds == 60:
+                hour = 1
+            if seconds < 60:
+                seconds += 1
+            if seconds == 60:
+                seconds = 0
+                minutes += 1
+            if minutes == 60:
+                minutes = 0
+                hour += 1
+             
             cursor.update()
             button1.update(screen, cursor, MinMoneyLabel)
             button2.update(screen, cursor, Obs)
@@ -375,8 +389,6 @@ class GUI:
                                 (((edge.vertexA.y + edge.vertexB.y) / 2)) - 20)
                 screen.blit(fontD.render(
                     f"{edge.value}", True, (0, 0, 0)), posfontD)
-
-                pygame.draw.rect(screen, (0,0,0), (edge.rect.left, edge.rect.top, edge.rect.width, edge.rect.height))
 
         for place in self.graph.places:
             screen.blit(country, (place.x - 40, place.y - 50))
