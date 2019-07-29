@@ -143,32 +143,27 @@ class GUI:
                         screenTK3 = Tk()
                         size = self.screen_size()
                         screenTK3.geometry(
-                            f"430x110+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
+                            f"430x260+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
                         screenTK3.title(
                             "Travel way")
                         Button(screenTK3, text="Way with the minimun cost",
                                command=lambda: self.start(screenTK3, 1)).place(x=20, y=50)
                         Button(screenTK3, text="Way with the minimun time",
-                               command=lambda: self.start(screenTK3, 2)).place(x=100, y=50)
+                               command=lambda: self.start(screenTK3, 2)).place(x=20, y=100)
                         Button(screenTK3, text="Other",
-                               command=lambda: self.start(screenTK3, 3)).place(x=200, y=50)
+                               command=lambda: self.start(screenTK3, 3)).place(x=20, y=150)
                         screenTK3.mainloop()
-                    """for place in self.graph.places:
-                        if cursor.colliderect(place.rect):
-                            pos = (place.x, place.y)
-                            init = place
-                            self.MinMoney = True"""
                     if cursor.colliderect(button1.rect):
                         screenTK = Tk()
                         size = self.screen_size()
                         screenTK.geometry(
-                            f"430x110+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
+                            f"430x160+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
                         screenTK.title(
                             "Select way to show")
                         Button(screenTK, text="Way with the minimun cost",
                                command=lambda: self.selway(screenTK, 1)).place(x=20, y=50)
                         Button(screenTK, text="Way with the minimun time",
-                               command=lambda: self.selway(screenTK, 2)).place(x=100, y=50)
+                               command=lambda: self.selway(screenTK, 2)).place(x=20, y=100)
                         screenTK.mainloop()
                     if self.mintime:
                         self.ways = True
@@ -265,7 +260,7 @@ class GUI:
                         screenTK4 = Tk()
                         size = self.screen_size()
                         screenTK4.geometry(
-                            f"430x110+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
+                            f"430x260+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
                         screenTK4.title(
                             "Travel form")
                         edge = self.graph.Get_Places(self.init, self.destiny)
@@ -284,10 +279,10 @@ class GUI:
                                    command=lambda: self.transport(screenTK4, Tr1)).place(x=20, y=50)
                         if T2:
                             Button(screenTK4, text="Car",
-                                   command=lambda: self.transport(screenTK4, Tr2)).place(x=100, y=50)
+                                   command=lambda: self.transport(screenTK4, Tr2)).place(x=20, y=100)
                         if T3:
                             Button(screenTK4, text="Donkey",
-                                   command=lambda: self.transport(screenTK4, Tr3)).place(x=200, y=50)
+                                   command=lambda: self.transport(screenTK4, Tr3)).place(x=20, y=150)
                         screenTK4.mainloop()
                 if event.type is pygame.QUIT:
                     pygame.quit()
@@ -296,7 +291,7 @@ class GUI:
 
             if self.MinMoney:
                 carSelect = self.orientation(
-                    pos, init, carDer, carIzq, carArr, carAba, carDerUp, carDerDown, carIzqUp, carIzqDown)
+                    pos, self.init, carDer, carIzq, carArr, carAba, carDerUp, carDerDown, carIzqUp, carIzqDown)
                 screen.blit(carSelect, pos)
                 for place in self.graph.places:
                     if place.x == pos[0] and place.y == pos[1]:
