@@ -10,7 +10,7 @@ class Edge:
         self.isbi = False
         self.obs = False
         self.linea = None
-        self.rect = (vertexA.rect.x, vertexA.rect.y, 20, 20)
+        self.rect = Rect(vertexA.rect.x, vertexA.rect.y, 20, 20)
         self.color = (0, 0, 0)
 
     def __eq__(self, edge):
