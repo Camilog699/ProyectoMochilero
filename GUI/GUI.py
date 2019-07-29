@@ -129,6 +129,12 @@ class GUI:
             screen.fill((0, 105, 155))
             for event in pygame.event.get():
                 if event.type is pygame.MOUSEBUTTONDOWN:
+                    if cursor.colliderect(button2.rect):
+                        self.obs = True
+                    elif self.obs:
+                        for edge in self.graph.edges:
+                            if (edge.line.x < pygame.mouse.get_pos()[0] < edge.line.right and edge.line.y < pygame.mouse.get_pos()[1] < edge.line.bottom):
+                                edge.obs = True
                     if cursor.colliderect(button4.rect):
                         self.transport = True
                     elif self.transport:
@@ -252,16 +258,16 @@ class GUI:
                                     if node.statusD[1] is self.init.label:
                                         self.destiny = node
                                         break
-                        
+                        self.other = False
                     if self.ini:
                         self.MinMoney = True
+                        self.ini = False
                         pos = (self.init.x, self.init.y)
                         screenTK4 = Tk()
                         size = self.screen_size()
                         screenTK4.geometry(
                             f"430x260+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
-                        screenTK4.title(
-                            "Travel form")
+                        screenTK4.title("Travel form")
                         edge = self.graph.Get_Places(self.init, self.destiny)
                         for transport in edge.forms:
                             if transport.id == 1:
@@ -275,13 +281,15 @@ class GUI:
                                 Tr3 = transport
                         if T1:
                             Button(screenTK4, text="Airplane",
-                                   command=lambda: self.transport(screenTK4, Tr1)).place(x=20, y=50)
+                                   command=lambda: self.transportF(screenTK4, Tr1)).place(x=20, y=50)
                         if T2:
                             Button(screenTK4, text="Car",
-                                   command=lambda: self.transport(screenTK4, Tr2)).place(x=20, y=100)
+                                   command=lambda: self.transportF(
+                                       screenTK4, Tr2)).place(x=20, y=100)
                         if T3:
                             Button(screenTK4, text="Donkey",
-                                   command=lambda: self.transport(screenTK4, Tr3)).place(x=20, y=150)
+                                   command=lambda: self.transportF(
+                                       screenTK4, Tr3)).place(x=20, y=150)
                         screenTK4.mainloop()
                 if event.type is pygame.QUIT:
                     pygame.quit()
@@ -376,8 +384,11 @@ class GUI:
                 showedge.append(edge)
                 showedge.append(self.graph.Get_Places(
                     edge.vertexB, edge.vertexA))
-                pygame.draw.line(screen, edge.color, (edge.vertexA.x,
+                edge.line = pygame.draw.line(screen, edge.color, (edge.vertexA.x,
                                                       edge.vertexA.y), (edge.vertexB.x, edge.vertexB.y), 10)
+                self.graph.Get_Places(edge.vertexB, edge.vertexA).line = edge.line
+                if edge.obs:
+                    screen.blit(carCrash, (edge.line.centerx, edge.line.centery))
                 if edge.vertexA.y == edge.vertexB.y:
                     posfontD = (
                         (((edge.vertexA.x + edge.vertexB.x) / 2) - 10, edge.vertexA.y - 20))
@@ -523,6 +534,6 @@ class GUI:
             self.ini = False
         screen.destroy()
     
-    def transport(self, screen, transport):
+    def transportF(self, screen, transport):
         self.form = transport
         screen.destroy()
