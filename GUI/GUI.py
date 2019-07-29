@@ -72,6 +72,7 @@ class GUI:
         SelecTransport = fontD.render("Select Trasport", True, (0, 0, 0))
         Time = fontD.render("Time: ", True, (0, 0, 0))
         start = fontB.render("Start travel", True, (0, 0, 0))
+        continueB = fontB.render("Cont. travel", True, (0, 0, 0))
 
         # images
         country = pygame.image.load("Imgs/city.png")
@@ -83,9 +84,10 @@ class GUI:
 
         # Buttons
         button1 = ButtonP(image1, image1, 40, 40)
-        button2 = ButtonP(image1, image1, 220, 40)
-        button3 = ButtonP(image1, image1, 420, 40)
-        button4 = ButtonP(image1, image1, 40, 140)
+        button2 = ButtonP(image1, image1, 200, 40)
+        button3 = ButtonP(image1, image1, 360, 40)
+        button4 = ButtonP(image1, image1, 40, 100)
+        button5 = ButtonP(image1, image1, 200, 100)
 
         # main elements
         cursor = Cursor()
@@ -215,14 +217,14 @@ class GUI:
                                 pos = (place.x, place.y)
                                 screenTK5 = Tk()
                                 screenTK5.geometry(
-                                    f"200x280+{pos[0]}+{pos[1]}")
+                                    f"280x300+{pos[0]}+{pos[1]}")
                                 screenTK5.title("Info")
                                 textC = StringVar(
                                     value="info to Place:")
                                 labelC = Label(
                                     screenTK5, textvariable=textC).place(x=5, y=10)
                                 text_ = StringVar(
-                                    value="_______________________________________")
+                                    value="__________________________________________________")
                                 label_ = Label(
                                     screenTK5, textvariable=text_).place(x=-10, y=30)
                                 textJobs = StringVar(
@@ -236,18 +238,38 @@ class GUI:
                                     Button(screenTK5, text=job.name, command=lambda: self.getJobs(
                                         screenTK5, job)).place(x=x, y=y)
                                 text_ = StringVar(
-                                    value="_______________________________________")
+                                    value="__________________________________________________")
                                 label_ = Label(
                                     screenTK5, textvariable=text_).place(x=-10, y=130)
+                                texttimeT = StringVar(
+                                    value="Time:")
+                                labeltimeT = Label(
+                                    screenTK5, textvariable=texttimeT).place(x=5, y=150)
+                                textcostT = StringVar(
+                                    value="Cost:")
+                                labelcostT = Label(
+                                    screenTK5, textvariable=textcostT).place(x=40, y=150)
                                 textThings = StringVar(
                                     value="Things:")
                                 labelThings = Label(
-                                    screenTK5, textvariable=textThings).place(x=5, y=150)
-                                x1 = 5
-                                y1 = 140
+                                    screenTK5, textvariable=textThings).place(x=80, y=150)
+                                text_ = StringVar(
+                                    value="__________________________________________________")
+                                label_ = Label(
+                                    screenTK5, textvariable=text_).place(x=-10, y=165)
+                                x1 = 90
+                                y1 = 155
                                 for thing in place.things:
                                     if thing.type == "optional":
                                         y1 += 30
+                                        textThingsTime = StringVar(
+                                            value=thing.time)
+                                        labelThingsTime = Label(
+                                            screenTK5, textvariable=textThingsTime).place(x=15, y=y1)
+                                        textThingsCost = StringVar(
+                                            value=thing.cost)
+                                        labelThingsCost = Label(
+                                            screenTK5, textvariable=textThingsCost).place(x=55, y=y1)
                                         Button(screenTK5, text=thing.name, command=lambda: self.getJobs(
                                             screenTK5, thing)).place(x=x1, y=y1)
                                 screenTK5.mainloop()
@@ -395,6 +417,7 @@ class GUI:
             button2.update(screen, cursor, Obs)
             button3.update(screen, cursor, start)
             button4.update(screen, cursor, Show)
+            button5.update(screen, cursor, continueB)
             pygame.display.update()
 
     def position(self):
