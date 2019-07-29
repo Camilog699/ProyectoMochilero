@@ -8,7 +8,6 @@ def main():
     json = JSON()
     graph = json.Read()
     GUI(graph)
-    #graph.Dijkstra()
 
 
 main()

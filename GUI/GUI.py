@@ -3,6 +3,7 @@ import subprocess
 import os
 import sys
 import ctypes
+from tkinter import*
 from Json.JSON import JSON
 from random import randint
 from Views.cursor import Cursor
@@ -15,7 +16,12 @@ class GUI:
         self.graph = graph
         self.visited = []
         self.cursor = Cursor()
+        self.mincost = False
+        self.mintime = False
+        self.cost = None
+        self.time = None
         self.MinMoney = False
+        self.ways = False
         self.draw()
 
     def screen_size(self):
@@ -40,9 +46,11 @@ class GUI:
         # fontDs
         fontD = pygame.font.SysFont("Times new Roman", 11)
         fontP = pygame.font.SysFont("Times new Roman", 20)
+        fontM = pygame.font.SysFont("Times new Roman", 50)
 
         # labels to use
-        MinMoneyLabel = fontD.render("Way whit minMoney", True, (0, 0, 0))
+        MinMoneyLabel = fontD.render("Minimun roads", True, (0, 0, 0))
+        Select = fontM.render("Select the arrival city", True, (255, 0, 0))
 
         # images
         country = pygame.image.load("Imgs/city.png")
@@ -63,19 +71,96 @@ class GUI:
         speed = 2
         right = True
         up = True
+        MinCost = []
+        MinTime = []
+        arrival = None
 
         while True:
             screen.fill((0, 105, 155))
             for event in pygame.event.get():
                 if event.type is pygame.MOUSEBUTTONDOWN:
-                    for place in self.graph.places:
+                    """for place in self.graph.places:
                         if cursor.colliderect(place.rect):
                             right = True
                             pos = (place.x, place.y)
                             # Analiza su primera adyacencia
                             adj = place.goings[0]
                             init = place
-                            self.MinMoney = True
+                            self.MinMoney = True"""
+                    if cursor.colliderect(button1.rect):
+                        screenTK = Tk()
+                        size = self.screen_size()
+                        screenTK.geometry(
+                            f"430x110+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
+                        screenTK.title(
+                            "Select way to show")
+                        Button(screenTK, text="Way with the minimun cost",
+                               command=lambda: self.selway(screenTK, 1)).place(x=20, y=50)
+                        Button(screenTK, text="Way with the minimun time",
+                               command=lambda: self.selway(screenTK, 2)).place(x=100, y=50)
+                        screenTK.mainloop()
+                    elif self.mintime:
+                        self.ways = True
+                        screenTK1 = Tk()
+                        size = self.screen_size()
+                        screenTK1.geometry(
+                            f"430x110+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
+                        screenTK1.title(
+                            "Way whit the minimun time")
+                        self.time = IntVar()
+                        textT = StringVar(
+                            value="Write the trip time.")
+                        labelT = Label(
+                            screenTK1, textvariable=textT).place(x=200, y=10)
+                        Time_field = Entry(
+                            screenTK1, textvariable=self.time, width=25).place(x=210, y=30)
+                        Button(screenTK1, text="OK",
+                               command=lambda: self.selway(screenTK1, 2)).place(x=170, y=70)
+                        screenTK1.mainloop()
+                    elif self.mincost:
+                        self.ways = True
+                        screenTK2 = Tk()
+                        size = self.screen_size()
+                        screenTK2.geometry(
+                            f"430x110+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
+                        screenTK2.title(
+                            "Way whit the minimun cost")
+                        self.cost = IntVar()
+                        textC = StringVar(
+                            value="Writhe the backpacker budget.")
+                        labelC = Label(
+                            screenTK2, textvariable=textC).place(x=5, y=10)
+                        Cost_field = Entry(
+                            screenTK2, textvariable=self.cost, width=25).place(x=10, y=30)
+                        Button(screenTK2, text="OK",
+                               command=lambda: screenTK2.destroy()).place(x=170, y=70)
+                        screenTK2.mainloop()
+                    if self.ways:
+                        for place in self.graph.places:
+                            if cursor.colliderect(place.rect):
+                                if self.mincost:
+                                    MinCost = self.graph.Dijkstra(
+                                        place, True, False, int(self.cost.get()))
+                                if self.mintime:
+                                    MinTime = self.graph.Dijkstra(
+                                        place, False, True, int(self.time.get()))
+                        if self.mincost:
+                            for edge in self.graph.edges:
+                                for node in MinCost:
+                                    if edge.vertexA is self.graph.Get_Vertex(node.status[1]) and edge.vertexB is node:
+                                        edge.color = (0, 255, 0)
+                                    elif edge.vertexA is node and edge.vertexB is self.graph.Get_Vertex(node.status[1]):
+                                        edge.color = (0, 255, 0)
+                            self.mincost = False
+                        if self.mintime:
+                            for edge in self.graph.edges:
+                                for node in MinTime:
+                                    if edge.vertexA is self.graph.Get_Vertex(node.statusT[1]) and edge.vertexB is node:
+                                        edge.color = (0, 0, 255)
+                                    elif edge.vertexA is node and edge.vertexB is self.graph.Get_Vertex(node.status[1]):
+                                        edge.color = (0, 0, 255)
+                            self.mintime = False
+                        self.ways = False
                 if event.type is pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -86,6 +171,9 @@ class GUI:
                     if place.x == pos[0] and place.y == pos[1]:
                         init = place
                 pos = self.transportMove(init, pos)
+            if self.mincost or self.mintime:
+                screen.blit(Select, (self.screen_size()[
+                    0]/2, 10))
 
             cursor.update()
             button1.update(screen, cursor, MinMoneyLabel)
@@ -148,8 +236,10 @@ class GUI:
         for edge in self.graph.edges:
             if edge not in showedge:
                 showedge.append(edge)
-                pygame.draw.line(screen, (0, 0, 0), (edge.vertexA.x,
-                                                     edge.vertexA.y), (edge.vertexB.x, edge.vertexB.y), 10)
+                showedge.append(self.graph.Get_Places(
+                    edge.vertexB, edge.vertexA))
+                pygame.draw.line(screen, edge.color, (edge.vertexA.x,
+                                                      edge.vertexA.y), (edge.vertexB.x, edge.vertexB.y), 10)
                 if edge.vertexA.y == edge.vertexB.y:
                     posfontD = (
                         (((edge.vertexA.x + edge.vertexB.x) / 2) - 10, edge.vertexA.y - 20))
@@ -192,3 +282,10 @@ class GUI:
             if pos[1] < init.goings[i].y:
                 pos = (pos[0], pos[1] + speed)
         return pos
+
+    def selway(self, screenTK, id):
+        if id == 1:
+            self.mincost = True
+        else:
+            self.mintime = True
+        screenTK.destroy()
