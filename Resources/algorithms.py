@@ -57,7 +57,7 @@ class Algorithms:
             else:
                 if (edge.vertexA.statusD[0] + edge.value) < edge.vertexB.statusD[0]:
                     edge.vertexB.statusD[0] = edge.vertexA.statusD[0] + edge.value
-                    edge.vertexB.statusT[1] = edge.vertexA.label
+                    edge.vertexB.statusD[1] = edge.vertexA.label
         for edge in edges:
             if minCost:
                 if edge.vertexB.status[0] < minvalue and edge.vertexB not in visitPlaces:

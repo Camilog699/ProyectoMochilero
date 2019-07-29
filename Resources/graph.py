@@ -64,6 +64,8 @@ class Graph:
         vertex.status[1] = vertex.label
         vertex.statusT[0] = 0
         vertex.statusT[1] = vertex.label
+        vertex.statusD[0] = 0
+        vertex.statusD[1] = vertex.label
         self.visited = Algorithms().Dijkstra(
             vertex, self.places, [], self.edges, True, self.visited, cost, time)
         way = []
@@ -84,7 +86,7 @@ class Graph:
                 else:
                     cont = False
 
-        if time:
+        elif time:
             for node in self.visited:
                 if node.statusT[0] > men.statusT[0] and node.statusT[0] < variable:
                     men = node
@@ -95,7 +97,17 @@ class Graph:
                     men = self.Get_Vertex(men.statusT[1])
                 else:
                     cont = False
+        else:
+            for node in self.visited:
+                if node is self.Get_Vertex(variable):
+                    men = node
 
+            while cont:
+                way.append(men)
+                if self.Get_Vertex(men.statusD[1]) is not men:
+                    men = self.Get_Vertex(men.statusD[1])
+                else:
+                    cont = False
         # for i in range(len(way) - 1, -1, -1):
           #  wayF.append(way[i])
 

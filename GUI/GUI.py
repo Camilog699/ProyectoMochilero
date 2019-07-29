@@ -216,17 +216,16 @@ class GUI:
                                         edge.color = (0, 0, 255)
                             self.mintime = False
                         self.ways = False
-                    if self.other:
+                    if self.ini:
                         self.way.clear()
                         for place in self.graph.places:
                             if cursor.colliderect(place.rect):
                                 self.way = self.graph.Dijkstra(
-                                    self.Nodeinit, False, False, 0)
+                                    self.Nodeinit, False, False, place.label)
                                 for node in self.way:
-                                    if node.status[1] is self.init.label:
+                                    if node.statusD[1] is self.init.label:
                                         self.destiny = node
                                         break
-                        self.other = False
                         
                     if self.ini:
                         self.MinMoney = True
@@ -284,6 +283,7 @@ class GUI:
             if self.other:
                 screen.blit(Select2, (self.screen_size()[
                     0]/2, 10))
+                self.ini = True
             cursor.update()
             button1.update(screen, cursor, MinMoneyLabel)
             button2.update(screen, cursor, Obs)
@@ -469,6 +469,8 @@ class GUI:
             self.mintime = True
         else:
             self.other = True
+            self.begin = False
+            self.ini = False
         screen.destroy()
     
     def transport(self, screen, transport):
