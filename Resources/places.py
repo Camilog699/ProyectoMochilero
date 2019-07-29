@@ -12,6 +12,7 @@ class Place:
         self.goings = []
         self.x = 0
         self.y = 0
+        self.statusD = [inf, None]
         self.status = [inf, None]
         self.statusT = [inf, None]
         self.rect = Rect(0, 0, 110, 90)

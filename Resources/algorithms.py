@@ -46,7 +46,7 @@ class Algorithms:
                     edge.vertexB.status[0] = edge.vertexA.status[0] + \
                         edge.value + cost
                     edge.vertexB.status[1] = edge.vertexA.label
-            if minTime:
+            elif minTime:
                 if (edge.vertexA.statusT[0] + edge.value) < edge.vertexB.statusT[0]:
                     for thing in edge.vertexB.things:
                         if thing.type == 'mandatory':
@@ -54,14 +54,22 @@ class Algorithms:
                     edge.vertexB.statusT[0] = edge.vertexA.statusT[0] + \
                         edge.value + cost
                     edge.vertexB.statusT[1] = edge.vertexA.label
+            else:
+                if (edge.vertexA.statusD[0] + edge.value) < edge.vertexB.statusD[0]:
+                    edge.vertexB.statusD[0] = edge.vertexA.statusD[0] + edge.value
+                    edge.vertexB.statusT[1] = edge.vertexA.label
         for edge in edges:
             if minCost:
                 if edge.vertexB.status[0] < minvalue and edge.vertexB not in visitPlaces:
                     minvalue = edge.vertexB.status[0]
                     minplace = edge.vertexB
-            if minTime:
+            elif minTime:
                 if edge.vertexB.statusT[0] < minvalue and edge.vertexB not in visitPlaces:
                     minvalue = edge.vertexB.statusT[0]
+                    minplace = edge.vertexB
+            else:
+                if edge.vertexB.statusD[0] < minvalue and edge.vertexB not in visitPlaces:
+                    minvalue = edge.vertexB.statusD[0]
                     minplace = edge.vertexB
         visited.append(minplace)
         visitPlaces = self.Dijkstra(
