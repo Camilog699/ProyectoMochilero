@@ -116,7 +116,7 @@ class GUI:
                         for edge in self.graph.edges:
                             if (edge.line.x < pygame.mouse.get_pos()[0] < edge.line.right and edge.line.y < pygame.mouse.get_pos()[1] < edge.line.bottom):
                                 edge.obs = True
-                    if cursor.colliderect(button4.rect):
+                    """if cursor.colliderect(button4.rect):
                         self.transport = True
                     elif self.transport:
                         for place in self.graph.places:
@@ -124,7 +124,7 @@ class GUI:
                                 pos = (place.x, place.y)
                                 init = place
                                 self.MinMoney = True
-                        self.transport = False
+                        self.transport = False"""
                     if cursor.colliderect(button3.rect):
                         self.ini = True
                         screenTK3 = Tk()
@@ -340,7 +340,7 @@ class GUI:
             if self.begin:
                 screen.blit(Select, (10, 650))
             if self.other:
-                screen.blit(Select2, (200, 10))
+                screen.blit(Select2, (10, 650))
                 self.ini = True
             screen.blit(fontH.render(f"{hour}:{minutes}:{seconds}", True, (0, 0, 0)), (1000, 20))
             if hour == 12 and minutes == 60 and seconds == 60:
