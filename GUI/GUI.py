@@ -59,7 +59,7 @@ class GUI:
         # fontDs
         fontD = pygame.font.SysFont("Times new Roman", 11)
         fontP = pygame.font.SysFont("Times new Roman", 20)
-        fontM = pygame.font.SysFont("Times new Roman", 50)
+        fontM = pygame.font.SysFont("Times new Roman", 40)
         fontH = pygame.font.SysFont("Times new Roman", 30)
 
         # labels to use
@@ -338,7 +338,7 @@ class GUI:
                 if self.MinMoney:
                     pos = self.transportMove(self.init, self.destiny, pos)
             if self.begin:
-                screen.blit(Select, (200, 10))
+                screen.blit(Select, (10, 650))
             if self.other:
                 screen.blit(Select2, (200, 10))
                 self.ini = True
