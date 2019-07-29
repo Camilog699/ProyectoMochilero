@@ -140,27 +140,27 @@ class GUI:
                         screenTK3.geometry(
                             f"430x260+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
                         screenTK3.title(
-                            "Travel way")
+                            "Start travel")
                         self.time = IntVar()
                         self.cost = IntVar()
                         textC = StringVar(
                             value="Write the backpacker budget.")
                         labelC = Label(
-                            screenTK2, textvariable=textC).place(x=5, y=10)
+                            screenTK3, textvariable=textC).place(x=25, y=10)
                         Cost_field = Entry(
-                            screenTK2, textvariable=self.cost, width=25).place(x=10, y=30)
+                            screenTK3, textvariable=self.cost, width=25).place(x=25, y=30)
                         textT = StringVar(
                             value="Write the trip time.")
                         labelT = Label(
-                            screenTK1, textvariable=textT).place(x=200, y=10)
+                            screenTK3, textvariable=textT).place(x=220, y=10)
                         Time_field = Entry(
-                            screenTK1, textvariable=self.time, width=25).place(x=210, y=30)
+                            screenTK3, textvariable=self.time, width=25).place(x=220, y=30)
                         Button(screenTK3, text="Way with the minimun cost",
-                               command=lambda: self.start(screenTK3, 1)).place(x=20, y=50)
+                               command=lambda: self.start(screenTK3, 1)).place(x=25, y=80)
                         Button(screenTK3, text="Way with the minimun time",
-                               command=lambda: self.start(screenTK3, 2)).place(x=20, y=100)
+                               command=lambda: self.start(screenTK3, 2)).place(x=220, y=80)
                         Button(screenTK3, text="Other",
-                               command=lambda: self.start(screenTK3, 3)).place(x=20, y=150)
+                               command=lambda: self.start(screenTK3, 3)).place(x=180, y=150)
                         screenTK3.mainloop()
                     if cursor.colliderect(button1.rect):
                         screenTK = Tk()
