@@ -23,7 +23,7 @@ class GUI:
         self.MinMoney = False
         self.ways = False
         self.obs = False
-        self.transport = False
+        self.show = False
         self.ini = False
         self.MinCost = []
         self.MinTime = []
@@ -34,6 +34,7 @@ class GUI:
         self.destiny = None
         self.init = None
         self.way = []
+        self.JobsToButton = []
         self.draw()
 
     def screen_size(self):
@@ -65,7 +66,7 @@ class GUI:
         Select = fontM.render("Select the arrival city", True, (255, 0, 0))
         Select2 = fontM.render("Select the destiny city", True, (255, 0, 0))
         Obs = fontD.render("Obstruction", True, (0, 0, 0))
-        All = fontD.render("All Ways", True, (0, 0, 0))
+        Show = fontD.render("Show info.", True, (0, 0, 0))
         SelecTransport = fontD.render("Select Trasport", True, (0, 0, 0))
         Time = fontD.render("Time: ", True, (0, 0, 0))
         start = fontD.render("Start travel", True, (0, 0, 0))
@@ -105,15 +106,6 @@ class GUI:
             screen.fill((0, 105, 155))
             for event in pygame.event.get():
                 if event.type is pygame.MOUSEBUTTONDOWN:
-                    if cursor.colliderect(button4.rect):
-                        self.transport = True
-                    elif self.transport:
-                        for place in self.graph.places:
-                            if cursor.colliderect(place.rect):
-                                pos = (place.x, place.y)
-                                init = place
-                                self.MinMoney = True
-                        self.transport = False
                     if cursor.colliderect(button3.rect):
                         self.ini = True
                         screenTK3 = Tk()
@@ -177,6 +169,51 @@ class GUI:
                         Button(screenTK2, text="OK",
                                command=lambda: screenTK2.destroy()).place(x=170, y=70)
                         screenTK2.mainloop()
+                    if cursor.colliderect(button4.rect):
+                        self.show = True
+                    elif self.show:
+                        for place in self.graph.places:
+                            if cursor.colliderect(place.rect):
+                                pos = (place.x, place.y)
+                                screenTK5 = Tk()
+                                screenTK5.geometry(
+                                    f"200x280+{pos[0]}+{pos[1]}")
+                                screenTK5.title("Info")
+                                textC = StringVar(
+                                    value="info to Place:")
+                                labelC = Label(
+                                    screenTK5, textvariable=textC).place(x=5, y=10)
+                                text_ = StringVar(
+                                    value="_______________________________________")
+                                label_ = Label(
+                                    screenTK5, textvariable=text_).place(x=-10, y=30)
+                                textJobs = StringVar(
+                                    value="Jobs:")
+                                labelJobs = Label(
+                                    screenTK5, textvariable=textJobs).place(x=5, y=50)
+                                x = 5
+                                y = 40
+                                for job in place.jobs:
+                                    y += 30
+                                    Button(screenTK5, text=job.name, command=lambda: self.getJobs(
+                                        screenTK5, job)).place(x=x, y=y)
+                                text_ = StringVar(
+                                    value="_______________________________________")
+                                label_ = Label(
+                                    screenTK5, textvariable=text_).place(x=-10, y=130)
+                                textThings = StringVar(
+                                    value="Things:")
+                                labelThings = Label(
+                                    screenTK5, textvariable=textThings).place(x=5, y=150)
+                                x1 = 5
+                                y1 = 140
+                                for thing in place.things:
+                                    if thing.type == "optional":
+                                        y1 += 30
+                                        Button(screenTK5, text=thing.name, command=lambda: self.getJobs(
+                                            screenTK5, thing)).place(x=x1, y=y1)
+                                screenTK5.mainloop()
+                        self.show = False
                     if self.begin:
                         for place in self.graph.places:
                             if cursor.colliderect(place.rect):
@@ -198,9 +235,9 @@ class GUI:
                                 self.Nodeinit, False, True, int(self.time.get()))
                             self.way = self.MinTime
                             for node in self.way:
-                                    if node.statusT[1] is self.init.label:
-                                        self.destiny = node
-                                        break
+                                if node.statusT[1] is self.init.label:
+                                    self.destiny = node
+                                    break
                         if self.mincost:
                             for edge in self.graph.edges:
                                 for node in self.MinCost:
@@ -228,7 +265,7 @@ class GUI:
                                     if node.statusD[1] is self.init.label:
                                         self.destiny = node
                                         break
-                        
+
                     if self.ini:
                         self.MinMoney = True
                         pos = (self.init.x, self.init.y)
@@ -289,6 +326,7 @@ class GUI:
             button1.update(screen, cursor, MinMoneyLabel)
             button2.update(screen, cursor, Obs)
             button3.update(screen, cursor, start)
+            button4.update(screen, cursor, Show)
             pygame.display.update()
 
     def position(self):
@@ -365,7 +403,8 @@ class GUI:
                 screen.blit(fontD.render(
                     f"{edge.value}", True, (0, 0, 0)), posfontD)
 
-                pygame.draw.rect(screen, (0,0,0), (edge.rect.left, edge.rect.top, edge.rect.width, edge.rect.height))
+                pygame.draw.rect(screen, (0, 0, 0), (edge.rect.left,
+                                                     edge.rect.top, edge.rect.width, edge.rect.height))
 
         for place in self.graph.places:
             screen.blit(country, (place.x - 40, place.y - 50))
@@ -380,16 +419,16 @@ class GUI:
         X1 = pos[0]
         Y1 = pos[1]
         # if init not in self.visited:
-          #  self.visited.append(init)
+        #  self.visited.append(init)
         speed = 1
         i = 0
         pas = False
         # if len(self.visited) is len(self.graph.places):
-          #  self.visited.clear()
+        #  self.visited.clear()
         # for j in range(len(init.goings)):
-          #  if init.goings[j] not in self.visited:
-           #     i = j
-            #    break
+        #  if init.goings[j] not in self.visited:
+        #     i = j
+        #    break
         # X2 = destiny.x
         # Y2 = destiny.y
         # Y = (Y2-Y1)*((X-X1)/(X2-X1))
@@ -499,9 +538,10 @@ class GUI:
             self.begin = False
             self.ini = False
         screen.destroy()
-    
+
     def transportF(self, screen, transport):
         self.form = transport
         screen.destroy()
 
-
+    def getJobs(self, screen, t):
+        self.JobsToButton.append(t)
