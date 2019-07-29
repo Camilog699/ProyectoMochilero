@@ -9,8 +9,8 @@ class Edge:
         self.forms = forms
         self.isbi = False
         self.obs = False
-        self.linea = None
-        self.rect = Rect(vertexA.rect.x, vertexA.rect.y, 20, 20)
+        self.line = None
+        self.rect = Rect(vertexA.x, vertexA.y, 80, 80)
         self.color = (0, 0, 0)
 
     def __eq__(self, edge):

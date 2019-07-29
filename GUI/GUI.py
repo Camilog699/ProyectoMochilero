@@ -60,6 +60,7 @@ class GUI:
         fontD = pygame.font.SysFont("Times new Roman", 11)
         fontP = pygame.font.SysFont("Times new Roman", 20)
         fontM = pygame.font.SysFont("Times new Roman", 50)
+        fontH = pygame.font.SysFont("Times new Roman", 30)
 
         # labels to use
         MinMoneyLabel = fontD.render("Minimun roads", True, (0, 0, 0))
@@ -101,11 +102,29 @@ class GUI:
         Tr1 = None
         Tr2 = None
         Tr3 = None
+        hour = 0
+        minutes = 0
+        seconds = 0
 
         while True:
             screen.fill((0, 105, 155))
             for event in pygame.event.get():
                 if event.type is pygame.MOUSEBUTTONDOWN:
+                    if cursor.colliderect(button2.rect):
+                        self.obs = True
+                    elif self.obs:
+                        for edge in self.graph.edges:
+                            if (edge.line.x < pygame.mouse.get_pos()[0] < edge.line.right and edge.line.y < pygame.mouse.get_pos()[1] < edge.line.bottom):
+                                edge.obs = True
+                    if cursor.colliderect(button4.rect):
+                        self.transport = True
+                    elif self.transport:
+                        for place in self.graph.places:
+                            if cursor.colliderect(place.rect):
+                                pos = (place.x, place.y)
+                                init = place
+                                self.MinMoney = True
+                        self.transport = False
                     if cursor.colliderect(button3.rect):
                         self.ini = True
                         screenTK3 = Tk()
@@ -266,15 +285,16 @@ class GUI:
                                         self.destiny = node
                                         break
 
+                        self.other = False
                     if self.ini:
                         self.MinMoney = True
+                        self.ini = False
                         pos = (self.init.x, self.init.y)
                         screenTK4 = Tk()
                         size = self.screen_size()
                         screenTK4.geometry(
                             f"430x260+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
-                        screenTK4.title(
-                            "Travel form")
+                        screenTK4.title("Travel form")
                         edge = self.graph.Get_Places(self.init, self.destiny)
                         for transport in edge.forms:
                             if transport.id == 1:
@@ -291,10 +311,12 @@ class GUI:
                                    command=lambda: self.transportF(screenTK4, Tr1)).place(x=20, y=50)
                         if T2:
                             Button(screenTK4, text="Car",
-                                   command=lambda: self.transportF(screenTK4, Tr2)).place(x=20, y=100)
+                                   command=lambda: self.transportF(
+                                       screenTK4, Tr2)).place(x=20, y=100)
                         if T3:
                             Button(screenTK4, text="Donkey",
-                                   command=lambda: self.transportF(screenTK4, Tr3)).place(x=20, y=150)
+                                   command=lambda: self.transportF(
+                                       screenTK4, Tr3)).place(x=20, y=150)
                         screenTK4.mainloop()
                 if event.type is pygame.QUIT:
                     pygame.quit()
@@ -316,12 +338,22 @@ class GUI:
                 if self.MinMoney:
                     pos = self.transportMove(self.init, self.destiny, pos)
             if self.begin:
-                screen.blit(Select, (self.screen_size()[
-                    0]/2, 10))
+                screen.blit(Select, (200, 10))
             if self.other:
-                screen.blit(Select2, (self.screen_size()[
-                    0]/2, 10))
+                screen.blit(Select2, (200, 10))
                 self.ini = True
+            screen.blit(fontH.render(f"{hour}:{minutes}:{seconds}", True, (0, 0, 0)), (1000, 20))
+            if hour == 12 and minutes == 60 and seconds == 60:
+                hour = 1
+            if seconds < 60:
+                seconds += 1
+            if seconds == 60:
+                seconds = 0
+                minutes += 1
+            if minutes == 60:
+                minutes = 0
+                hour += 1
+             
             cursor.update()
             button1.update(screen, cursor, MinMoneyLabel)
             button2.update(screen, cursor, Obs)
@@ -389,8 +421,11 @@ class GUI:
                 showedge.append(edge)
                 showedge.append(self.graph.Get_Places(
                     edge.vertexB, edge.vertexA))
-                pygame.draw.line(screen, edge.color, (edge.vertexA.x,
+                edge.line = pygame.draw.line(screen, edge.color, (edge.vertexA.x,
                                                       edge.vertexA.y), (edge.vertexB.x, edge.vertexB.y), 10)
+                self.graph.Get_Places(edge.vertexB, edge.vertexA).line = edge.line
+                if edge.obs:
+                    screen.blit(carCrash, (edge.line.centerx, edge.line.centery))
                 if edge.vertexA.y == edge.vertexB.y:
                     posfontD = (
                         (((edge.vertexA.x + edge.vertexB.x) / 2) - 10, edge.vertexA.y - 20))
@@ -402,9 +437,6 @@ class GUI:
                                 (((edge.vertexA.y + edge.vertexB.y) / 2)) - 20)
                 screen.blit(fontD.render(
                     f"{edge.value}", True, (0, 0, 0)), posfontD)
-
-                pygame.draw.rect(screen, (0, 0, 0), (edge.rect.left,
-                                                     edge.rect.top, edge.rect.width, edge.rect.height))
 
         for place in self.graph.places:
             screen.blit(country, (place.x - 40, place.y - 50))
