@@ -106,12 +106,23 @@ class GUI:
         airArr = pygame.image.load("Imgs/airUp.png")
         airArr = pygame.transform.scale(airArr, (30, 50))
         airAba = pygame.transform.rotate(airArr, 180)
-        airDer = pygame.transform.rotate(airArr, 90)
-        airIzq = pygame.transform.rotate(airArr, -90)
+        airDer = pygame.transform.rotate(airArr, -90)
+        airIzq = pygame.transform.rotate(airArr, 90)
         airDerDown = pygame.transform.rotate(airDer, -40)
         airDerUp = pygame.transform.rotate(airDer, 40)
         airIzqDown = pygame.transform.rotate(airIzq, 45)
         airIzqUp = pygame.transform.rotate(airIzq, -45)
+
+        #Donkey
+        donkeyArr = pygame.image.load("Imgs/donkeyUp.png")
+        donkeyArr = pygame.transform.scale(donkeyArr, (30, 50))
+        donkeyAba = pygame.transform.rotate(donkeyArr, 180)
+        donkeyDer = pygame.transform.rotate(donkeyArr, -90)
+        donkeyIzq = pygame.transform.rotate(donkeyArr, 90)
+        donkeyDerDown = pygame.transform.rotate(donkeyDer, -40)
+        donkeyDerUp = pygame.transform.rotate(donkeyDer, 40)
+        donkeyIzqDown = pygame.transform.rotate(donkeyIzq, 45)
+        donkeyIzqUp = pygame.transform.rotate(donkeyIzq, -45)
 
         pos = (0, 0)
         speed = 2
@@ -273,15 +284,18 @@ class GUI:
                             if transport.id == 3:
                                 T3 = True
                                 Tr3 = transport
+                        for place in edges.vertexA.edge.forms:
+                            if place.id == 1:
+                                pass
                         if T1:
                             Button(screenTK4, text="Airplane",
-                                   command=lambda: self.transport(screenTK4, Tr1)).place(x=20, y=50)
+                                   command=lambda: self.transportF(screenTK4, Tr1)).place(x=20, y=50)
                         if T2:
                             Button(screenTK4, text="Car",
-                                   command=lambda: self.transport(screenTK4, Tr2)).place(x=20, y=100)
+                                   command=lambda: self.transportF(screenTK4, Tr2)).place(x=20, y=100)
                         if T3:
                             Button(screenTK4, text="Donkey",
-                                   command=lambda: self.transport(screenTK4, Tr3)).place(x=20, y=150)
+                                   command=lambda: self.transportF(screenTK4, Tr3)).place(x=20, y=150)
                         screenTK4.mainloop()
                 if event.type is pygame.QUIT:
                     pygame.quit()
@@ -289,8 +303,8 @@ class GUI:
             self.draw_graph(screen, country, carCrash, fontD, fontP)
 
             if self.MinMoney:
-                carSelect = self.orientation(
-                    pos, self.init, carDer, carIzq, carArr, carAba, carDerUp, carDerDown, carIzqUp, carIzqDown)
+                """carSelect = self.orientation(
+                            pos, self.init, carDer, carIzq, carArr, carAba, carDerUp, carDerDown, carIzqUp, carIzqDown)"""
                 screen.blit(carSelect, pos)
                 for place in self.graph.places:
                     if place.x == pos[0] and place.y == pos[1]:
@@ -523,6 +537,11 @@ class GUI:
             self.ini = False
         screen.destroy()
     
-    def transport(self, screen, transport):
+    def transportF(self, screen, transport):
         self.form = transport
         screen.destroy()
+
+    def transportSelector(self, transport):
+        if transport == 1:
+            pass
+
