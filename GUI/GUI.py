@@ -24,6 +24,13 @@ class GUI:
         self.ways = False
         self.obs = False
         self.transport = False
+        self.init = False
+        self.MinCost = []
+        self.MinTime = []
+        self.other = False
+        self.begin = True
+        self.Nodeinit = None
+        self.way = []
         self.draw()
 
     def screen_size(self):
@@ -53,10 +60,12 @@ class GUI:
         # labels to use
         MinMoneyLabel = fontD.render("Minimun roads", True, (0, 0, 0))
         Select = fontM.render("Select the arrival city", True, (255, 0, 0))
+        Select2 = fontM.render("Select the destiny city", True, (255, 0, 0))
         Obs = fontD.render("Obstruction", True, (0, 0, 0))
         All = fontD.render("All Ways", True, (0, 0, 0))
         SelecTransport = fontD.render("Select Trasport", True, (0, 0, 0))
         Time = fontD.render("Time: ", True, (0, 0, 0))
+        start = fontD.render("Start travel", True, (0, 0, 0))
 
         # images
         country = pygame.image.load("Imgs/city.png")
@@ -76,7 +85,7 @@ class GUI:
         cursor = Cursor()
 
         # elements by animation
-            #car
+        # car
         carDer = pygame.image.load("Imgs/carDer.png")
         carDer = pygame.transform.scale(carDer, (50, 30))
         carIzq = pygame.image.load("Imgs/carIzq.png")
@@ -90,7 +99,7 @@ class GUI:
         carIzqDown = pygame.transform.rotate(carIzq, 45)
         carIzqUp = pygame.transform.rotate(carIzq, -45)
 
-            #airplane
+        # airplane
         airArr = pygame.image.load("Imgs/airUp.png")
         airArr = pygame.transform.scale(airArr, (30, 50))
         airAba = pygame.transform.rotate(airArr, 180)
@@ -101,13 +110,10 @@ class GUI:
         airIzqDown = pygame.transform.rotate(airIzq, 45)
         airIzqUp = pygame.transform.rotate(airIzq, -45)
 
-
         pos = (0, 0)
         speed = 2
         right = True
         up = True
-        MinCost = []
-        MinTime = []
         arrival = None
         init = None
 
@@ -124,6 +130,25 @@ class GUI:
                                 init = place
                                 self.MinMoney = True
                         self.transport = False
+                    if cursor.colliderect(button3.rect):
+                        screenTK3 = Tk()
+                        size = self.screen_size()
+                        screenTK3.geometry(
+                            f"430x110+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
+                        screenTK3.title(
+                            "Travel form")
+                        Button(screenTK3, text="Way with the minimun cost",
+                               command=lambda: self.start(screenTK3, 1)).place(x=20, y=50)
+                        Button(screenTK3, text="Way with the minimun time",
+                               command=lambda: self.start(screenTK3, 2)).place(x=100, y=50)
+                        Button(screenTK3, text="Other",
+                               command=lambda: self.start(screenTK3, 3)).place(x=200, y=50)
+                        screenTK3.mainloop()
+                    """for place in self.graph.places:
+                        if cursor.colliderect(place.rect):
+                            pos = (place.x, place.y)
+                            init = place
+                            self.MinMoney = True"""
                     if cursor.colliderect(button1.rect):
                         screenTK = Tk()
                         size = self.screen_size()
@@ -136,7 +161,7 @@ class GUI:
                         Button(screenTK, text="Way with the minimun time",
                                command=lambda: self.selway(screenTK, 2)).place(x=100, y=50)
                         screenTK.mainloop()
-                    elif self.mintime:
+                    if self.mintime:
                         self.ways = True
                         screenTK1 = Tk()
                         size = self.screen_size()
@@ -154,7 +179,7 @@ class GUI:
                         Button(screenTK1, text="OK",
                                command=lambda: self.selway(screenTK1, 2)).place(x=170, y=70)
                         screenTK1.mainloop()
-                    elif self.mincost:
+                    if self.mincost:
                         self.ways = True
                         screenTK2 = Tk()
                         size = self.screen_size()
@@ -172,29 +197,41 @@ class GUI:
                         Button(screenTK2, text="OK",
                                command=lambda: screenTK2.destroy()).place(x=170, y=70)
                         screenTK2.mainloop()
-                    if self.ways:
+                    if self.other:
+                        self.way.clear()
                         for place in self.graph.places:
                             if cursor.colliderect(place.rect):
-                                if self.mincost:
-                                    MinCost = self.graph.Dijkstra(
-                                        place, True, False, int(self.cost.get()))
-                                if self.mintime:
-                                    MinTime = self.graph.Dijkstra(
-                                        place, False, True, int(self.time.get()))
+                                self.way = self.graph.Dijkstra(
+                                    self.Nodeinit, False, False, 0)
+                    if self.begin:
+                        for place in self.graph.places:
+                            if cursor.colliderect(place.rect):
+                                self.Nodeinit = place
+                        self.begin = False
+                    if self.ways:
+                        self.way.clear()
+                        if self.mincost:
+                            self.MinCost = self.graph.Dijkstra(
+                                self.Nodeinit, True, False, int(self.cost.get()))
+                            self.way = self.MinCost
+                        if self.mintime:
+                            self.MinTime = self.graph.Dijkstra(
+                                self.Nodeinit, False, True, int(self.time.get()))
+                            self.way = self.MinTime
                         if self.mincost:
                             for edge in self.graph.edges:
-                                for node in MinCost:
+                                for node in self.MinCost:
                                     if edge.vertexA is self.graph.Get_Vertex(node.status[1]) and edge.vertexB is node:
                                         edge.color = (0, 255, 0)
-                                    elif edge.vertexA is node and edge.vertexB is self.graph.Get_Vertex(node.status[1]):
+                                    if edge.vertexA is node and edge.vertexB is self.graph.Get_Vertex(node.status[1]):
                                         edge.color = (0, 255, 0)
                             self.mincost = False
                         if self.mintime:
                             for edge in self.graph.edges:
-                                for node in MinTime:
+                                for node in self.MinTime:
                                     if edge.vertexA is self.graph.Get_Vertex(node.statusT[1]) and edge.vertexB is node:
                                         edge.color = (0, 0, 255)
-                                    elif edge.vertexA is node and edge.vertexB is self.graph.Get_Vertex(node.status[1]):
+                                    if edge.vertexA is node and edge.vertexB is self.graph.Get_Vertex(node.statusT[1]):
                                         edge.color = (0, 0, 255)
                             self.mintime = False
                         self.ways = False
@@ -211,17 +248,16 @@ class GUI:
                     if place.x == pos[0] and place.y == pos[1]:
                         init = place
                 pos = self.transportMove(init, pos)
-            if self.mincost or self.mintime:
+            if self.begin:
                 screen.blit(Select, (self.screen_size()[
                     0]/2, 10))
-
-            
-
+            if self.other:
+                screen.blit(Select2, (self.screen_size()[
+                    0]/2, 10))
             cursor.update()
             button1.update(screen, cursor, MinMoneyLabel)
             button2.update(screen, cursor, Obs)
-            button3.update(screen, cursor, All)
-            button4.update(screen, cursor, SelecTransport)
+            button3.update(screen, cursor, start)
             pygame.display.update()
 
     def position(self):
@@ -323,7 +359,7 @@ class GUI:
                 break
         X2 = init.goings[i].x
         Y2 = init.goings[i].y
-        #Y = (Y2-Y1)*((X-X1)/(X2-X1))
+        # Y = (Y2-Y1)*((X-X1)/(X2-X1))
 
         # To right
         if init.x < init.goings[i].x and init.y == init.goings[i].y:
@@ -418,3 +454,12 @@ class GUI:
         else:
             self.mintime = True
         screenTK.destroy()
+
+    def start(self, screen, id):
+        if id == 1:
+            self.mincost = True
+        elif id == 2:
+            self.mintime = True
+        else:
+            self.other = True
+        screen.destroy()
