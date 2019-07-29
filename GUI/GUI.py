@@ -298,12 +298,14 @@ class GUI:
             screen.blit(fontH.render(f"{hour}:{minutes}:{seconds}", True, (0, 0, 0)), (1000, 20))
             if hour == 12 and minutes == 60 and seconds == 60:
                 hour = 1
-            if seconds < 60:
+                minutes = 0
+                seconds = 0
+            elif seconds < 60:
                 seconds += 1
-            if seconds == 60:
+            elif seconds == 60:
                 seconds = 0
                 minutes += 1
-            if minutes == 60:
+            elif minutes == 60:
                 minutes = 0
                 hour += 1
              
