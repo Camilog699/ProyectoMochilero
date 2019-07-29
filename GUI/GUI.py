@@ -23,12 +23,15 @@ class GUI:
         self.MinMoney = False
         self.ways = False
         self.obs = False
-        self.init = False
+        self.ini = False
         self.MinCost = []
         self.MinTime = []
         self.other = False
         self.begin = True
         self.Nodeinit = None
+        self.form = None
+        self.destiny = None
+        self.init = None
         self.way = []
         self.draw()
 
@@ -93,19 +96,25 @@ class GUI:
         right = True
         up = True
         arrival = None
-        init = None
+        T1 = False
+        T2 = False
+        T3 = False
+        Tr1 = None
+        Tr2 = None
+        Tr3 = None
 
         while True:
             screen.fill((0, 105, 155))
             for event in pygame.event.get():
                 if event.type is pygame.MOUSEBUTTONDOWN:
                     if cursor.colliderect(button3.rect):
+                        self.ini = True
                         screenTK3 = Tk()
                         size = self.screen_size()
                         screenTK3.geometry(
                             f"430x110+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
                         screenTK3.title(
-                            "Travel form")
+                            "Travel way")
                         Button(screenTK3, text="Way with the minimun cost",
                                command=lambda: self.start(screenTK3, 1)).place(x=20, y=50)
                         Button(screenTK3, text="Way with the minimun time",
@@ -158,7 +167,7 @@ class GUI:
                             "Way whit the minimun cost")
                         self.cost = IntVar()
                         textC = StringVar(
-                            value="Writhe the backpacker budget.")
+                            value="Write the backpacker budget.")
                         labelC = Label(
                             screenTK2, textvariable=textC).place(x=5, y=10)
                         Cost_field = Entry(
@@ -166,16 +175,11 @@ class GUI:
                         Button(screenTK2, text="OK",
                                command=lambda: screenTK2.destroy()).place(x=170, y=70)
                         screenTK2.mainloop()
-                    if self.other:
-                        self.way.clear()
-                        for place in self.graph.places:
-                            if cursor.colliderect(place.rect):
-                                self.way = self.graph.Dijkstra(
-                                    self.Nodeinit, False, False, 0)
                     if self.begin:
                         for place in self.graph.places:
                             if cursor.colliderect(place.rect):
                                 self.Nodeinit = place
+                                self.init = place
                         self.begin = False
                     if self.ways:
                         self.way.clear()
@@ -183,10 +187,18 @@ class GUI:
                             self.MinCost = self.graph.Dijkstra(
                                 self.Nodeinit, True, False, int(self.cost.get()))
                             self.way = self.MinCost
+                            for node in self.way:
+                                if node.status[1] is self.init.label:
+                                    self.destiny = node
+                                    break
                         if self.mintime:
                             self.MinTime = self.graph.Dijkstra(
                                 self.Nodeinit, False, True, int(self.time.get()))
                             self.way = self.MinTime
+                            for node in self.way:
+                                    if node.statusT[1] is self.init.label:
+                                        self.destiny = node
+                                        break
                         if self.mincost:
                             for edge in self.graph.edges:
                                 for node in self.MinCost:
@@ -204,6 +216,48 @@ class GUI:
                                         edge.color = (0, 0, 255)
                             self.mintime = False
                         self.ways = False
+                    if self.other:
+                        self.way.clear()
+                        for place in self.graph.places:
+                            if cursor.colliderect(place.rect):
+                                self.way = self.graph.Dijkstra(
+                                    self.Nodeinit, False, False, 0)
+                                for node in self.way:
+                                    if node.status[1] is self.init.label:
+                                        self.destiny = node
+                                        break
+                        self.other = False
+                        
+                    if self.ini:
+                        self.MinMoney = True
+                        pos = (self.init.x, self.init.y)
+                        screenTK4 = Tk()
+                        size = self.screen_size()
+                        screenTK4.geometry(
+                            f"430x110+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
+                        screenTK4.title(
+                            "Travel form")
+                        edge = self.graph.Get_Places(self.init, self.destiny)
+                        for transport in edge.forms:
+                            if transport.id == 1:
+                                T1 = True
+                                Tr1 = transport
+                            if transport.id == 2:
+                                T2 = True
+                                Tr2 = transport
+                            if transport.id == 3:
+                                T3 = True
+                                Tr3 = transport
+                        if T1:
+                            Button(screenTK4, text="Airplane",
+                                   command=lambda: self.transport(screenTK4, Tr1)).place(x=20, y=50)
+                        if T2:
+                            Button(screenTK4, text="Car",
+                                   command=lambda: self.transport(screenTK4, Tr2)).place(x=100, y=50)
+                        if T3:
+                            Button(screenTK4, text="Donkey",
+                                   command=lambda: self.transport(screenTK4, Tr3)).place(x=200, y=50)
+                        screenTK4.mainloop()
                 if event.type is pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -211,12 +265,19 @@ class GUI:
 
             if self.MinMoney:
                 carSelect = self.orientation(
-                    pos, init, carDer, carIzq, carArr, carAba)
+                    pos, self.init, self.destiny, carDer, carIzq, carArr, carAba)
                 screen.blit(carSelect, pos)
                 for place in self.graph.places:
                     if place.x == pos[0] and place.y == pos[1]:
-                        init = place
-                pos = self.transportMove(init, pos)
+                        self.init = place
+                if self.init == self.destiny:
+                    for node in self.way:
+                        if node.status[1] is self.init.label:
+                            self.destiny = node
+                            break
+                    self.MinMoney = False
+                if self.MinMoney:
+                    pos = self.transportMove(self.init, self.destiny, pos)
             if self.begin:
                 screen.blit(Select, (self.screen_size()[
                     0]/2, 10))
@@ -312,84 +373,85 @@ class GUI:
 
     # Modificar
 
-    def transportMove(self, init, pos):
+    def transportMove(self, init, destiny, pos):
         X1 = pos[0]
         Y1 = pos[1]
-        if init not in self.visited:
-            self.visited.append(init)
+        # if init not in self.visited:
+          #  self.visited.append(init)
         speed = 1
         i = 0
         pas = False
-        if len(self.visited) is len(self.graph.places):
-            self.visited.clear()
-        for j in range(len(init.goings)):
-            if init.goings[j] not in self.visited:
-                i = j
-                break
-        X2 = init.goings[i].x
-        Y2 = init.goings[i].y
+        # if len(self.visited) is len(self.graph.places):
+          #  self.visited.clear()
+        # for j in range(len(init.goings)):
+          #  if init.goings[j] not in self.visited:
+           #     i = j
+            #    break
+        # X2 = destiny.x
+        # Y2 = destiny.y
         # Y = (Y2-Y1)*((X-X1)/(X2-X1))
-
+        X2 = destiny.x
+        Y2 = destiny.y
         # To right
-        if init.x < init.goings[i].x and init.y == init.goings[i].y:
-            if pos[0] < init.goings[i].x:
+        if init.x < destiny.x and init.y == destiny.y:
+            if pos[0] < destiny.x:
                 pos = (pos[0] + speed, pos[1])
         # To Left
-        elif init.x > init.goings[i].x and init.y == init.goings[i].y:
-            if pos[0] > init.goings[i].x:
+        elif init.x > destiny.x and init.y == destiny.y:
+            if pos[0] > destiny.x:
                 pos = (pos[0] - speed, pos[1])
         # Equal
             # To Up
-        elif init.x == init.goings[i].x and init.y > init.goings[i].y:
-            if pos[1] > init.goings[i].y:
+        elif init.x == destiny.x and init.y > destiny.y:
+            if pos[1] > destiny.y:
                 pos = (pos[0], pos[1] - speed)
             # To Down
-        elif init.x == init.goings[i].x and init.y < init.goings[i].y:
-            if pos[1] < init.goings[i].y:
+        elif init.x == destiny.x and init.y < destiny.y:
+            if pos[1] < destiny.y:
                 pos = (pos[0], pos[1] + speed)
         # To Right-Up
-        elif init.x < init.goings[i].x and init.y > init.goings[i].y:
-            if pos[0] < init.goings[i].x and pos[1] > init.goings[i].y:
+        elif init.x < destiny.x and init.y > destiny.y:
+            if pos[0] < destiny.x and pos[1] > destiny.y:
                 pos = (pos[0] + speed,
                        ((Y2-Y1)*(((pos[0] + speed)-X1)/(X2-X1))) + Y1)
         # To Right-Down
-        elif init.x < init.goings[i].x and init.y < init.goings[i].y:
-            if pos[0] < init.goings[i].x and pos[1] < init.goings[i].y:
+        elif init.x < destiny.x and init.y < destiny.y:
+            if pos[0] < destiny.x and pos[1] < destiny.y:
                 pos = (pos[0] + speed,
                        ((Y2-Y1)*(((pos[0] + speed)-X1)/(X2-X1))) + Y1)
         # To Left-Up
-        elif init.x > init.goings[i].x and init.y > init.goings[i].y:
-            if pos[0] > init.goings[i].x and pos[1] > init.goings[i].y:
+        elif init.x > destiny.x and init.y > destiny.y:
+            if pos[0] > destiny.x and pos[1] > destiny.y:
                 pos = (pos[0] - speed,
                        ((Y2-Y1)*(((pos[0] - speed)-X1)/(X2-X1))) + Y1)
         # To Left-Down
-        elif init.x > init.goings[i].x and init.y < init.goings[i].y:
-            if pos[0] > init.goings[i].x and pos[1] < init.goings[i].y:
+        elif init.x > destiny.x and init.y < destiny.y:
+            if pos[0] > destiny.x and pos[1] < destiny.y:
                 pos = (pos[0] - speed,
                        ((Y2-Y1)*(((pos[0] - speed)-X1)/(X2-X1))) + Y1)
         return pos
 
-    def orientation(self, pos, init, carDer, carIzq, carArr, carAba):
-        if init not in self.visited:
-            self.visited.append(init)
+    def orientation(self, pos, init, destiny, carDer, carIzq, carArr, carAba):
+        #if init not in self.visited:
+         #   self.visited.append(init)
         speed = 2
         i = 0
         pas = False
         carSelect = carDer
-        if len(self.visited) is len(self.graph.places):
-            self.visited.clear()
-        for j in range(len(init.goings)):
-            if init.goings[j] not in self.visited:
-                i = j
-                break
-        if pos[0] < init.goings[i].x:
+        # if len(self.visited) is len(self.graph.places):
+          #  self.visited.clear()
+        #for j in range(len(init.goings)):
+         #   if init.goings[j] not in self.visited:
+          #      i = j
+           #     break
+        if pos[0] < destiny.x:
             carSelect = carDer
-        if pos[0] > init.goings[i].x:
+        if pos[0] > destiny.x:
             carSelect = carIzq
-        if pos[0] == init.goings[i].x:
-            if pos[1] > init.goings[i].y:
+        if pos[0] == destiny.x:
+            if pos[1] > destiny.y:
                 carSelect = carArr
-            if pos[1] < init.goings[i].y:
+            if pos[1] < destiny.y:
                 carSelect = carAba
         return carSelect
 
@@ -407,4 +469,8 @@ class GUI:
             self.mintime = True
         else:
             self.other = True
+        screen.destroy()
+    
+    def transport(self, screen, transport):
+        self.form = transport
         screen.destroy()
