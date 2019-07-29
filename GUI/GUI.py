@@ -61,16 +61,18 @@ class GUI:
         fontP = pygame.font.SysFont("Times new Roman", 20)
         fontM = pygame.font.SysFont("Times new Roman", 40)
         fontH = pygame.font.SysFont("Times new Roman", 30)
+        fontB = pygame.font.SysFont("Times new Roman", 15)
 
         # labels to use
-        MinMoneyLabel = fontD.render("Minimun roads", True, (0, 0, 0))
+        MinMoneyLabel = fontB.render("Min. roads", True, (0, 0, 0))
         Select = fontM.render("Select the arrival city", True, (255, 0, 0))
         Select2 = fontM.render("Select the destiny city", True, (255, 0, 0))
-        Obs = fontD.render("Obstruction", True, (0, 0, 0))
-        Show = fontD.render("Show info.", True, (0, 0, 0))
+        Obs = fontB.render("Obstruction", True, (0, 0, 0))
+        Show = fontB.render("Show info.", True, (0, 0, 0))
         SelecTransport = fontD.render("Select Trasport", True, (0, 0, 0))
         Time = fontD.render("Time: ", True, (0, 0, 0))
-        start = fontD.render("Start travel", True, (0, 0, 0))
+        start = fontB.render("Start travel", True, (0, 0, 0))
+        continueB = fontB.render("Cont. travel", True, (0, 0, 0))
 
         # images
         country = pygame.image.load("Imgs/city.png")
@@ -82,9 +84,10 @@ class GUI:
 
         # Buttons
         button1 = ButtonP(image1, image1, 40, 40)
-        button2 = ButtonP(image1, image1, 220, 40)
-        button3 = ButtonP(image1, image1, 420, 40)
-        button4 = ButtonP(image1, image1, 40, 140)
+        button2 = ButtonP(image1, image1, 200, 40)
+        button3 = ButtonP(image1, image1, 360, 40)
+        button4 = ButtonP(image1, image1, 40, 100)
+        button5 = ButtonP(image1, image1, 200, 100)
 
         # main elements
         cursor = Cursor()
@@ -196,14 +199,14 @@ class GUI:
                                 pos = (place.x, place.y)
                                 screenTK5 = Tk()
                                 screenTK5.geometry(
-                                    f"200x280+{pos[0]}+{pos[1]}")
+                                    f"280x300+{pos[0]}+{pos[1]}")
                                 screenTK5.title("Info")
                                 textC = StringVar(
                                     value="info to Place:")
                                 labelC = Label(
                                     screenTK5, textvariable=textC).place(x=5, y=10)
                                 text_ = StringVar(
-                                    value="_______________________________________")
+                                    value="__________________________________________________")
                                 label_ = Label(
                                     screenTK5, textvariable=text_).place(x=-10, y=30)
                                 textJobs = StringVar(
@@ -217,18 +220,38 @@ class GUI:
                                     Button(screenTK5, text=job.name, command=lambda: self.getJobs(
                                         screenTK5, job)).place(x=x, y=y)
                                 text_ = StringVar(
-                                    value="_______________________________________")
+                                    value="__________________________________________________")
                                 label_ = Label(
                                     screenTK5, textvariable=text_).place(x=-10, y=130)
+                                texttimeT = StringVar(
+                                    value="Time:")
+                                labeltimeT = Label(
+                                    screenTK5, textvariable=texttimeT).place(x=5, y=150)
+                                textcostT = StringVar(
+                                    value="Cost:")
+                                labelcostT = Label(
+                                    screenTK5, textvariable=textcostT).place(x=40, y=150)
                                 textThings = StringVar(
                                     value="Things:")
                                 labelThings = Label(
-                                    screenTK5, textvariable=textThings).place(x=5, y=150)
-                                x1 = 5
-                                y1 = 140
+                                    screenTK5, textvariable=textThings).place(x=80, y=150)
+                                text_ = StringVar(
+                                    value="__________________________________________________")
+                                label_ = Label(
+                                    screenTK5, textvariable=text_).place(x=-10, y=165)
+                                x1 = 90
+                                y1 = 155
                                 for thing in place.things:
                                     if thing.type == "optional":
                                         y1 += 30
+                                        textThingsTime = StringVar(
+                                            value=thing.time)
+                                        labelThingsTime = Label(
+                                            screenTK5, textvariable=textThingsTime).place(x=15, y=y1)
+                                        textThingsCost = StringVar(
+                                            value=thing.cost)
+                                        labelThingsCost = Label(
+                                            screenTK5, textvariable=textThingsCost).place(x=55, y=y1)
                                         Button(screenTK5, text=thing.name, command=lambda: self.getJobs(
                                             screenTK5, thing)).place(x=x1, y=y1)
                                 screenTK5.mainloop()
@@ -342,23 +365,27 @@ class GUI:
             if self.other:
                 screen.blit(Select2, (10, 650))
                 self.ini = True
-            screen.blit(fontH.render(f"{hour}:{minutes}:{seconds}", True, (0, 0, 0)), (1000, 20))
+            screen.blit(fontH.render(
+                f"{hour}:{minutes}:{seconds}", True, (0, 0, 0)), (1000, 20))
             if hour == 12 and minutes == 60 and seconds == 60:
                 hour = 1
-            if seconds < 60:
+                minutes = 0
+                seconds = 0
+            elif seconds < 60:
                 seconds += 1
-            if seconds == 60:
+            elif seconds == 60:
                 seconds = 0
                 minutes += 1
-            if minutes == 60:
+            elif minutes == 60:
                 minutes = 0
                 hour += 1
-             
+
             cursor.update()
             button1.update(screen, cursor, MinMoneyLabel)
             button2.update(screen, cursor, Obs)
             button3.update(screen, cursor, start)
             button4.update(screen, cursor, Show)
+            button5.update(screen, cursor, continueB)
             pygame.display.update()
 
     def position(self):
@@ -422,10 +449,12 @@ class GUI:
                 showedge.append(self.graph.Get_Places(
                     edge.vertexB, edge.vertexA))
                 edge.line = pygame.draw.line(screen, edge.color, (edge.vertexA.x,
-                                                      edge.vertexA.y), (edge.vertexB.x, edge.vertexB.y), 10)
-                self.graph.Get_Places(edge.vertexB, edge.vertexA).line = edge.line
+                                                                  edge.vertexA.y), (edge.vertexB.x, edge.vertexB.y), 10)
+                self.graph.Get_Places(
+                    edge.vertexB, edge.vertexA).line = edge.line
                 if edge.obs:
-                    screen.blit(carCrash, (edge.line.centerx, edge.line.centery))
+                    screen.blit(
+                        carCrash, (edge.line.centerx, edge.line.centery))
                 if edge.vertexA.y == edge.vertexB.y:
                     posfontD = (
                         (((edge.vertexA.x + edge.vertexB.x) / 2) - 10, edge.vertexA.y - 20))
