@@ -23,6 +23,7 @@ class GUI:
         self.MinMoney = False
         self.ways = False
         self.obs = False
+        self.transport = False
         self.draw()
 
     def screen_size(self):
@@ -53,6 +54,9 @@ class GUI:
         MinMoneyLabel = fontD.render("Minimun roads", True, (0, 0, 0))
         Select = fontM.render("Select the arrival city", True, (255, 0, 0))
         Obs = fontD.render("Obstruction", True, (0, 0, 0))
+        All = fontD.render("All Ways", True, (0, 0, 0))
+        SelecTransport = fontD.render("Select Trasport", True, (0, 0, 0))
+        Time = fontD.render("Time: ", True, (0, 0, 0))
 
         # images
         country = pygame.image.load("Imgs/city.png")
@@ -65,11 +69,14 @@ class GUI:
         # Buttons
         button1 = ButtonP(image1, image1, 40, 40)
         button2 = ButtonP(image1, image1, 220, 40)
+        button3 = ButtonP(image1, image1, 420, 40)
+        button4 = ButtonP(image1, image1, 40, 140)
 
         # main elements
         cursor = Cursor()
 
         # elements by animation
+            #car
         carDer = pygame.image.load("Imgs/carDer.png")
         carDer = pygame.transform.scale(carDer, (50, 30))
         carIzq = pygame.image.load("Imgs/carIzq.png")
@@ -78,6 +85,23 @@ class GUI:
         carArr = pygame.transform.scale(carArr, (30, 50))
         carAba = pygame.image.load("Imgs/carAba.png")
         carAba = pygame.transform.scale(carAba, (30, 50))
+        carDerDown = pygame.transform.rotate(carDer, -40)
+        carDerUp = pygame.transform.rotate(carDer, 40)
+        carIzqDown = pygame.transform.rotate(carIzq, 45)
+        carIzqUp = pygame.transform.rotate(carIzq, -45)
+
+            #airplane
+        airArr = pygame.image.load("Imgs/airUp.png")
+        airArr = pygame.transform.scale(airArr, (30, 50))
+        airAba = pygame.transform.rotate(airArr, 180)
+        airDer = pygame.transform.rotate(airArr, 90)
+        airIzq = pygame.transform.rotate(airArr, -90)
+        airDerDown = pygame.transform.rotate(airDer, -40)
+        airDerUp = pygame.transform.rotate(airDer, 40)
+        airIzqDown = pygame.transform.rotate(airIzq, 45)
+        airIzqUp = pygame.transform.rotate(airIzq, -45)
+
+
         pos = (0, 0)
         speed = 2
         right = True
@@ -91,11 +115,15 @@ class GUI:
             screen.fill((0, 105, 155))
             for event in pygame.event.get():
                 if event.type is pygame.MOUSEBUTTONDOWN:
-                    """for place in self.graph.places:
-                        if cursor.colliderect(place.rect):
-                            pos = (place.x, place.y)
-                            init = place
-                            self.MinMoney = True"""
+                    if cursor.colliderect(button4.rect):
+                        self.transport = True
+                    elif self.transport:
+                        for place in self.graph.places:
+                            if cursor.colliderect(place.rect):
+                                pos = (place.x, place.y)
+                                init = place
+                                self.MinMoney = True
+                        self.transport = False
                     if cursor.colliderect(button1.rect):
                         screenTK = Tk()
                         size = self.screen_size()
@@ -177,7 +205,7 @@ class GUI:
 
             if self.MinMoney:
                 carSelect = self.orientation(
-                    pos, init, carDer, carIzq, carArr, carAba)
+                    pos, init, carDer, carIzq, carArr, carAba, carDerUp, carDerDown, carIzqUp, carIzqDown)
                 screen.blit(carSelect, pos)
                 for place in self.graph.places:
                     if place.x == pos[0] and place.y == pos[1]:
@@ -187,9 +215,13 @@ class GUI:
                 screen.blit(Select, (self.screen_size()[
                     0]/2, 10))
 
+            
+
             cursor.update()
             button1.update(screen, cursor, MinMoneyLabel)
             button2.update(screen, cursor, Obs)
+            button3.update(screen, cursor, All)
+            button4.update(screen, cursor, SelecTransport)
             pygame.display.update()
 
     def position(self):
@@ -332,7 +364,7 @@ class GUI:
                        ((Y2-Y1)*(((pos[0] - speed)-X1)/(X2-X1))) + Y1)
         return pos
 
-    def orientation(self, pos, init, carDer, carIzq, carArr, carAba):
+    def orientation(self, pos, init, carDer, carIzq, carArr, carAba, carDerUp, carDerDown, carIzqUp, carIzqDown):
         if init not in self.visited:
             self.visited.append(init)
         speed = 2
@@ -345,15 +377,39 @@ class GUI:
             if init.goings[j] not in self.visited:
                 i = j
                 break
-        if pos[0] < init.goings[i].x:
-            carSelect = carDer
-        if pos[0] > init.goings[i].x:
-            carSelect = carIzq
-        if pos[0] == init.goings[i].x:
+        # To right
+        if init.x < init.goings[i].x and init.y == init.goings[i].y:
+            if pos[0] < init.goings[i].x:
+                carSelect = carDer
+        # To Left
+        elif init.x > init.goings[i].x and init.y == init.goings[i].y:
+            if pos[0] > init.goings[i].x:
+                carSelect = carIzq
+        # Equal
+            # To Up
+        elif init.x == init.goings[i].x and init.y > init.goings[i].y:
             if pos[1] > init.goings[i].y:
                 carSelect = carArr
+            # To Down
+        elif init.x == init.goings[i].x and init.y < init.goings[i].y:
             if pos[1] < init.goings[i].y:
                 carSelect = carAba
+        # To Right-Up
+        elif init.x < init.goings[i].x and init.y > init.goings[i].y:
+            if pos[0] < init.goings[i].x and pos[1] > init.goings[i].y:
+                carSelect = carDerUp
+        # To Right-Down
+        elif init.x < init.goings[i].x and init.y < init.goings[i].y:
+            if pos[0] < init.goings[i].x and pos[1] < init.goings[i].y:
+                carSelect = carDerDown
+        # To Left-Up
+        elif init.x > init.goings[i].x and init.y > init.goings[i].y:
+            if pos[0] > init.goings[i].x and pos[1] > init.goings[i].y:
+                carSelect = carIzqUp
+        # To Left-Down
+        elif init.x > init.goings[i].x and init.y < init.goings[i].y:
+            if pos[0] > init.goings[i].x and pos[1] < init.goings[i].y:
+                carSelect = carIzqDown
         return carSelect
 
     def selway(self, screenTK, id):
