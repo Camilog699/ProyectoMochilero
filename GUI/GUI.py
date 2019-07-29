@@ -88,41 +88,6 @@ class GUI:
         cursor = Cursor()
 
         # elements by animation
-        # car
-        carDer = pygame.image.load("Imgs/carDer.png")
-        carDer = pygame.transform.scale(carDer, (50, 30))
-        carIzq = pygame.image.load("Imgs/carIzq.png")
-        carIzq = pygame.transform.scale(carIzq, (50, 30))
-        carArr = pygame.image.load("Imgs/carArr.png")
-        carArr = pygame.transform.scale(carArr, (30, 50))
-        carAba = pygame.image.load("Imgs/carAba.png")
-        carAba = pygame.transform.scale(carAba, (30, 50))
-        carDerDown = pygame.transform.rotate(carDer, -40)
-        carDerUp = pygame.transform.rotate(carDer, 40)
-        carIzqDown = pygame.transform.rotate(carIzq, 45)
-        carIzqUp = pygame.transform.rotate(carIzq, -45)
-
-        # airplane
-        airArr = pygame.image.load("Imgs/airUp.png")
-        airArr = pygame.transform.scale(airArr, (30, 50))
-        airAba = pygame.transform.rotate(airArr, 180)
-        airDer = pygame.transform.rotate(airArr, -90)
-        airIzq = pygame.transform.rotate(airArr, 90)
-        airDerDown = pygame.transform.rotate(airDer, -40)
-        airDerUp = pygame.transform.rotate(airDer, 40)
-        airIzqDown = pygame.transform.rotate(airIzq, 45)
-        airIzqUp = pygame.transform.rotate(airIzq, -45)
-
-        #Donkey
-        donkeyArr = pygame.image.load("Imgs/donkeyUp.png")
-        donkeyArr = pygame.transform.scale(donkeyArr, (30, 50))
-        donkeyAba = pygame.transform.rotate(donkeyArr, 180)
-        donkeyDer = pygame.transform.rotate(donkeyArr, -90)
-        donkeyIzq = pygame.transform.rotate(donkeyArr, 90)
-        donkeyDerDown = pygame.transform.rotate(donkeyDer, -40)
-        donkeyDerUp = pygame.transform.rotate(donkeyDer, 40)
-        donkeyIzqDown = pygame.transform.rotate(donkeyIzq, 45)
-        donkeyIzqUp = pygame.transform.rotate(donkeyIzq, -45)
 
         pos = (0, 0)
         speed = 2
@@ -411,6 +376,8 @@ class GUI:
                 screen.blit(fontD.render(
                     f"{edge.value}", True, (0, 0, 0)), posfontD)
 
+                pygame.draw.rect(screen, (0,0,0), (edge.rect.left, edge.rect.top, edge.rect.width, edge.rect.height))
+
         for place in self.graph.places:
             screen.blit(country, (place.x - 40, place.y - 50))
             place.rect.x = place.x - 40
@@ -478,13 +445,13 @@ class GUI:
                        ((Y2-Y1)*(((pos[0] - speed)-X1)/(X2-X1))) + Y1)
         return pos
 
-    def orientation(self, pos, init, carDer, carIzq, carArr, carAba, carDerUp, carDerDown, carIzqUp, carIzqDown):
+    def orientation(self, pos, init):
         if init not in self.visited:
             self.visited.append(init)
         speed = 2
         i = 0
         pas = False
-        carSelect = carDer
+        carSelect = self.form.Der
         if len(self.visited) is len(self.graph.places):
             self.visited.clear()
         for j in range(len(init.goings)):
@@ -494,36 +461,36 @@ class GUI:
         # To right
         if init.x < init.goings[i].x and init.y == init.goings[i].y:
             if pos[0] < init.goings[i].x:
-                carSelect = carDer
+                carSelect = self.form.Der
         # To Left
         elif init.x > init.goings[i].x and init.y == init.goings[i].y:
             if pos[0] > init.goings[i].x:
-                carSelect = carIzq
+                carSelect = self.form.Izq
         # Equal
             # To Up
         elif init.x == init.goings[i].x and init.y > init.goings[i].y:
             if pos[1] > init.goings[i].y:
-                carSelect = carArr
+                carSelect = self.form.Arr
             # To Down
         elif init.x == init.goings[i].x and init.y < init.goings[i].y:
             if pos[1] < init.goings[i].y:
-                carSelect = carAba
+                carSelect = self.form.Aba
         # To Right-Up
         elif init.x < init.goings[i].x and init.y > init.goings[i].y:
             if pos[0] < init.goings[i].x and pos[1] > init.goings[i].y:
-                carSelect = carDerUp
+                carSelect = self.form.DerUp
         # To Right-Down
         elif init.x < init.goings[i].x and init.y < init.goings[i].y:
             if pos[0] < init.goings[i].x and pos[1] < init.goings[i].y:
-                carSelect = carDerDown
+                carSelect = self.form.DerDown
         # To Left-Up
         elif init.x > init.goings[i].x and init.y > init.goings[i].y:
             if pos[0] > init.goings[i].x and pos[1] > init.goings[i].y:
-                carSelect = carIzqUp
+                carSelect = self.form.IzqUp
         # To Left-Down
         elif init.x > init.goings[i].x and init.y < init.goings[i].y:
             if pos[0] > init.goings[i].x and pos[1] < init.goings[i].y:
-                carSelect = carIzqDown
+                carSelect = self.form.IzqDown
         return carSelect
 
     def selway(self, screenTK, id):
@@ -548,7 +515,4 @@ class GUI:
         self.form = transport
         screen.destroy()
 
-    def transportSelector(self, transport):
-        if transport == 1:
-            pass
 

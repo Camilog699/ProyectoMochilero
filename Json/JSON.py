@@ -3,6 +3,7 @@ from Resources.transport import Transport
 from Resources.jobs import Jobs
 from Resources.things import Things
 from Resources.places import Place
+import pygame
 import json
 import os
 
@@ -24,12 +25,55 @@ class JSON:
         with open(file) as jfile:
             data = json.load(jfile)
 
+        Arr = None
+        Aba = None
+        Der = None
+        Izq = None
+        DerDown = None
+        DerUp = None
+        IzqDown = None
+        IzqUp = None
+
         for trans in data["transportForm"]:
             id = trans["id"]
             name = trans["id"]
             valueByKm = trans["valueByKm"]
             timeByKm = trans["timeByKm"]
-            newTransport = Transport(id, name, valueByKm, timeByKm)
+            if id == 1:
+                Arr = pygame.image.load("Imgs/airUp.png")
+                Arr = pygame.transform.scale(Arr, (30, 50))
+                Aba = pygame.transform.rotate(Arr, 180)
+                Der = pygame.transform.rotate(Arr, -90)
+                Izq = pygame.transform.rotate(Arr, 90)
+                DerDown = pygame.transform.rotate(Der, -40)
+                DerUp = pygame.transform.rotate(Der, 40)
+                IzqDown = pygame.transform.rotate(Izq, 45)
+                IzqUp = pygame.transform.rotate(Izq, -45)
+            if id == 2:
+                Der = pygame.image.load("Imgs/carDer.png")
+                Der = pygame.transform.scale(Der, (50, 30))
+                Izq = pygame.image.load("Imgs/carIzq.png")
+                Izq = pygame.transform.scale(Izq, (50, 30))
+                Arr = pygame.image.load("Imgs/carArr.png")
+                Arr = pygame.transform.scale(Arr, (30, 50))
+                Aba = pygame.image.load("Imgs/carAba.png")
+                Aba = pygame.transform.scale(Aba, (30, 50))
+                DerDown = pygame.transform.rotate(Der, -40)
+                DerUp = pygame.transform.rotate(Der, 40)
+                IzqDown = pygame.transform.rotate(Izq, 45)
+                IzqUp = pygame.transform.rotate(Izq, -45)
+            if id == 3:
+                Arr = pygame.image.load("Imgs/donkeyUp.png")
+                Arr = pygame.transform.scale(Arr, (30, 50))
+                Aba = pygame.transform.rotate(Arr, 180)
+                Der = pygame.transform.rotate(Arr, -90)
+                Izq = pygame.transform.rotate(Arr, 90)
+                DerDown = pygame.transform.rotate(Der, -40)
+                DerUp = pygame.transform.rotate(Der, 40)
+                IzqDown = pygame.transform.rotate(Izq, 45)
+                IzqUp = pygame.transform.rotate(Izq, -45)
+            newTransport = Transport(
+                id, name, valueByKm, timeByKm, Der, Izq, Arr, Aba, DerUp, DerDown, IzqUp, IzqDown)
             self.transports.append(newTransport)
 
         for place in data["places"]:
