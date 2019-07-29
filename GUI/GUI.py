@@ -353,8 +353,8 @@ class GUI:
             if pos[1] > init.goings[i].y:
                 carSelect = carArr
             if pos[1] < init.goings[i].y:
-                pos = (pos[0], pos[1] + speed)
-        return pos
+                carSelect = carAba
+        return carSelect
 
     def selway(self, screenTK, id):
         if id == 1:
