@@ -45,36 +45,41 @@ class JSON:
                 Aba = pygame.transform.rotate(Arr, 180)
                 Der = pygame.transform.rotate(Arr, -90)
                 Izq = pygame.transform.rotate(Arr, 90)
-                DerDown = pygame.transform.rotate(Der, -40)
-                DerUp = pygame.transform.rotate(Der, 40)
-                IzqDown = pygame.transform.rotate(Izq, 45)
-                IzqUp = pygame.transform.rotate(Izq, -45)
+                DerDown = pygame.transform.rotate(Arr, -120)
+                DerUp = pygame.transform.rotate(Arr, -45)
+                IzqDown = pygame.transform.rotate(Arr, 120)
+                IzqUp = pygame.transform.rotate(Arr, 45)
             if id == 2:
-                Der = pygame.image.load("Imgs/carDer.png")
-                Der = pygame.transform.scale(Der, (50, 30))
-                Izq = pygame.image.load("Imgs/carIzq.png")
-                Izq = pygame.transform.scale(Izq, (50, 30))
                 Arr = pygame.image.load("Imgs/carArr.png")
                 Arr = pygame.transform.scale(Arr, (30, 50))
-                Aba = pygame.image.load("Imgs/carAba.png")
-                Aba = pygame.transform.scale(Aba, (30, 50))
-                DerDown = pygame.transform.rotate(Der, -40)
-                DerUp = pygame.transform.rotate(Der, 40)
-                IzqDown = pygame.transform.rotate(Izq, 45)
-                IzqUp = pygame.transform.rotate(Izq, -45)
+                Aba = pygame.transform.rotate(Arr, 180)
+                Der = pygame.transform.rotate(Arr, -90)
+                Izq = pygame.transform.rotate(Arr, 90)
+                DerDown = pygame.transform.rotate(Arr, -120)
+                DerUp = pygame.transform.rotate(Arr, -45)
+                IzqDown = pygame.transform.rotate(Arr, 120)
+                IzqUp = pygame.transform.rotate(Arr, 45)
             if id == 3:
                 Arr = pygame.image.load("Imgs/donkeyUp.png")
                 Arr = pygame.transform.scale(Arr, (30, 50))
                 Aba = pygame.transform.rotate(Arr, 180)
                 Der = pygame.transform.rotate(Arr, -90)
                 Izq = pygame.transform.rotate(Arr, 90)
-                DerDown = pygame.transform.rotate(Der, -40)
-                DerUp = pygame.transform.rotate(Der, 40)
-                IzqDown = pygame.transform.rotate(Izq, 45)
-                IzqUp = pygame.transform.rotate(Izq, -45)
+                DerDown = pygame.transform.rotate(Arr, -120)
+                DerUp = pygame.transform.rotate(Arr, -45)
+                IzqDown = pygame.transform.rotate(Arr, 120)
+                IzqUp = pygame.transform.rotate(Arr, 45)
             newTransport = Transport(
                 id, name, valueByKm, timeByKm, Der, Izq, Arr, Aba, DerUp, DerDown, IzqUp, IzqDown)
             self.transports.append(newTransport)
+            Arr = None
+            Aba = None
+            Der = None
+            Izq = None
+            DerDown = None
+            DerUp = None
+            IzqDown = None
+            IzqUp = None
 
         for place in data["places"]:
             jobs = []

@@ -1,6 +1,7 @@
 from Resources.places import Place
 from Resources.edge import Edge
 from Resources.algorithms import Algorithms
+from Resources.backpacker import Backpacker
 
 
 class Graph:
@@ -112,3 +113,42 @@ class Graph:
           #  wayF.append(way[i])
 
         return way
+
+    def evaluate(self, valueIni, timeIni, vertexA, vertexB, transport, things, job):
+        newBack = Backpacker(valueIni, timeIni)
+        money = False
+
+        for edge in self.edges:
+            if edge.forms == "1":
+                valueBytrasnport = 8 * edge.value
+                timeBytransport = 1 * edge.value
+            elif edge.forms == "2":
+                valueBytrasnport = 5 * edge.value
+                timeBytransport = 5 * edge.value
+            elif edge.forms == "3":
+                valueBytrasnport = 3 * edge.value
+                timeBytransport = 15 * edge.value
+            newBack.money = newBack.money - valueBytrasnport
+            newBack.time = newBack.time - timeBytransport
+
+        for place in self.places:
+            for thing in place.things:
+                if thing.type == "mandatory":
+                    newBack.time = newBack.time - thing.time
+                    newBack.money = newBack.money - thing.cost
+                if thing.type == "optional":
+                    newBack.time = newBack.time - thing.time
+                    newBack.money = newBack.money - thing.cost
+
+            if newBack.work():
+                money = self.evaluateMoney(newBack)
+                if money:
+                    for job in place.jobs:
+                        newBack.time = newBack.time - job.time
+                        newBack.money = newBack.money + job.gain
+
+    def evaluateMoney(self, backaper):
+        if backaper.money < backaper.min:
+            return True
+        else:
+            return False
