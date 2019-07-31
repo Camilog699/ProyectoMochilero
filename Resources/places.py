@@ -12,6 +12,7 @@ class Place:
         self.goings = []
         self.x = 0
         self.y = 0
+        self.visit = False
         self.statusD = [inf, None]
         self.status = [inf, None]
         self.statusT = [inf, None]

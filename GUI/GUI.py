@@ -3,6 +3,7 @@ import subprocess
 import os
 import sys
 import ctypes
+from math import inf
 from tkinter import*
 from Json.JSON import JSON
 from random import randint
@@ -38,6 +39,7 @@ class GUI:
         self.init = None
         self.way = []
         self.walk = False
+        self.pas = False
         self.minimunC = False
         self.minimunT = False
         self.mostrar = False
@@ -328,6 +330,7 @@ class GUI:
                             if cursor.colliderect(place.rect):
                                 self.Nodeinit = place
                                 self.init = place
+                        self.init.visit = True
                         self.begin = False
                     if self.ways:
                         self.way.clear()
@@ -429,7 +432,11 @@ class GUI:
                 for place in self.graph.places:
                     if place.x == pos[0] and place.y == pos[1]:
                         self.init = place
-                        break
+                        break 
+                if self.init is not self.destiny and not self.destiny.visit:
+                    self.pas = True
+                elif self.destiny:
+                    self.pas = False
                 if self.init == self.destiny:
                     for node in self.way:
                         if self.minimunC:
@@ -441,8 +448,10 @@ class GUI:
                         if status is self.init.label:
                             self.destiny = node
                             break
-                    self.MinMoney = False
+                    if self.pas:
+                        self.MinMoney = False
                 if self.MinMoney:
+                    self.init = True
                     pos = self.transportMove(self.init, self.destiny, pos)
                 else:
                     self.walk = True
