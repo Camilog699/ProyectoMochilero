@@ -8,12 +8,14 @@ from Json.JSON import JSON
 from random import randint
 from Views.cursor import Cursor
 from Views.button import ButtonP
+from Resources.backpacker import Backpacker
 pygame.init()
 
 
 class GUI:
     def __init__(self, graph):
         self.graph = graph
+        self.backpacker = None
         self.visited = []
         self.cursor = Cursor()
         self.mincost = False
@@ -40,9 +42,11 @@ class GUI:
         self.minimunT = False
         self.mostrar = False
         self.minimunO = False
+        self.destinyin = None
         self.JobsToButton = []
+        self.Jobs2ToButton = []
         self.acti1 = ""
-        self.acti2 = ""
+        self.job2 = ""
         self.draw()
 
     def screen_size(self):
@@ -77,10 +81,13 @@ class GUI:
         Select2 = fontM.render("Select the destiny city", True, (255, 0, 0))
         Obs = fontB.render("Obstruction", True, (0, 0, 0))
         Show = fontB.render("Show info.", True, (0, 0, 0))
+        Finish = fontB.render("Resume", True, (0, 0, 0))
         SelecTransport = fontD.render("Select Trasport", True, (0, 0, 0))
         Time = fontD.render("Time: ", True, (0, 0, 0))
         start = fontB.render("Start travel", True, (0, 0, 0))
         continueB = fontB.render("Cont. travel", True, (0, 0, 0))
+        obstru = fontB.render(
+            "Current route obstructed, recalculating...", True, (255, 0, 0))
 
         # images
         country = pygame.image.load("Imgs/city.png")
@@ -100,6 +107,7 @@ class GUI:
         button3 = ButtonP(image1, image1, 360, 40)
         button4 = ButtonP(image1, image1, 40, 100)
         button5 = ButtonP(image1, image1, 200, 100)
+        button6 = ButtonP(image1, image1, 360, 100)
 
         # main elements
         cursor = Cursor()
@@ -138,15 +146,6 @@ class GUI:
                         for edge in self.graph.edges:
                             if (edge.line.x < pygame.mouse.get_pos()[0] < edge.line.right and edge.line.y < pygame.mouse.get_pos()[1] < edge.line.bottom):
                                 edge.obs = True
-                    """if cursor.colliderect(button4.rect):
-                        self.transport = True
-                    elif self.transport:
-                        for place in self.graph.places:
-                            if cursor.colliderect(place.rect):
-                                pos = (place.x, place.y)
-                                init = place
-                                self.MinMoney = True
-                        self.transport = False"""
                     if cursor.colliderect(button3.rect):
                         self.ini = True
                         screenTK3 = Tk()
@@ -176,6 +175,9 @@ class GUI:
                         Button(screenTK3, text="Other",
                                command=lambda: self.start(screenTK3, 3)).place(x=180, y=150)
                         screenTK3.mainloop()
+                        self.backpacker = Backpacker(
+                            self.cost.get(), self.time.get())
+                        self.mostrar = True
                     if cursor.colliderect(button1.rect):
                         screenTK = Tk()
                         size = self.screen_size()
@@ -188,41 +190,6 @@ class GUI:
                         Button(screenTK, text="Way with the minimun time",
                                command=lambda: self.selway(screenTK, 2)).place(x=20, y=100)
                         screenTK.mainloop()
-                    if self.mintime:
-                        self.ways = True
-                        screenTK1 = Tk()
-                        size = self.screen_size()
-                        self.time = IntVar()
-                        screenTK1.geometry(
-                            f"430x110+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
-                        screenTK1.title(
-                            "Way whit the minimun time")
-                        labelT = Label(
-                            screenTK1, textvariable=textT).place(x=200, y=10)
-                        Time_field = Entry(
-                            screenTK1, textvariable=self.time, width=25).place(x=210, y=30)
-                        Button(screenTK1, text="OK",
-                               command=lambda: self.selway(screenTK1, 2)).place(x=170, y=70)
-                        screenTK1.mainloop()
-                    if self.mincost:
-                        self.ways = True
-                        self.mostrar = True
-                        screenTK2 = Tk()
-                        size = self.screen_size()
-                        screenTK2.geometry(
-                            f"430x110+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
-                        screenTK2.title(
-                            "Way whit the minimun cost")
-                        self.cost = IntVar()
-                        textC = StringVar(
-                            value="Write the backpacker budget.")
-                        labelC = Label(
-                            screenTK2, textvariable=textC).place(x=5, y=10)
-                        Cost_field = Entry(
-                            screenTK2, textvariable=self.cost, width=25).place(x=10, y=30)
-                        Button(screenTK2, text="OK",
-                               command=lambda: screenTK2.destroy()).place(x=170, y=70)
-                        screenTK2.mainloop()
                     if cursor.colliderect(button4.rect):
                         self.show = True
                     elif self.show:
@@ -231,8 +198,10 @@ class GUI:
                                 pos = (place.x, place.y)
                                 screenTK5 = Tk()
                                 screenTK5.geometry(
-                                    f"280x350+{pos[0]}+{pos[1]}")
+                                    f"280x410+{pos[0]}+{pos[1]}")
                                 screenTK5.title("Info")
+                                self.acti1 = StringVar()
+                                self.job1 = StringVar()
                                 textC = StringVar(
                                     value="info to Place:")
                                 labelC = Label(
@@ -241,16 +210,42 @@ class GUI:
                                     value="__________________________________________________")
                                 label_ = Label(
                                     screenTK5, textvariable=text_).place(x=-10, y=30)
-                                textJobs = StringVar(
-                                    value="Jobs:")
-                                labelJobs = Label(
-                                    screenTK5, textvariable=textJobs).place(x=5, y=50)
-                                x = 5
-                                y = 40
-                                for job in place.jobs:
-                                    y += 30
-                                    Button(screenTK5, text=job.name, command=lambda: self.getJobs(
-                                        screenTK5, job)).place(x=x, y=y)
+                                if self.backpacker.getWork():
+                                    texttimeT = StringVar(
+                                        value="Time:")
+                                    labeltimeT = Label(
+                                        screenTK5, textvariable=texttimeT).place(x=5, y=50)
+                                    textGainT = StringVar(
+                                        value="Gain:")
+                                    labelGainT = Label(
+                                        screenTK5, textvariable=textGainT).place(x=40, y=50)
+                                    textJobs = StringVar(
+                                        value="Jobs:")
+                                    labelJobs = Label(
+                                        screenTK5, textvariable=textJobs).place(x=80, y=50)
+                                    text_ = StringVar(
+                                        value="__________________________________________________")
+                                    label_ = Label(
+                                        screenTK5, textvariable=text_).place(x=-10, y=65)
+                                    x = 5
+                                    y = 50
+                                    for job in place.jobs:
+                                        y += 30
+                                        textJobsTime = StringVar(
+                                            value=job.time)
+                                        labelJobsTime = Label(
+                                            screenTK5, textvariable=textJobsTime).place(x=15, y=y)
+                                        textJobsGain = StringVar(
+                                            value=job.gain)
+                                        labelJobsgain = Label(
+                                            screenTK5, textvariable=textJobsGain).place(x=55, y=y)
+                                        # Elementos para realizar nuevos "botones"
+                                        textJob = StringVar(
+                                            value=job.name)
+                                        labelJob = Label(
+                                            screenTK5, textvariable=textJob).place(x=95, y=y)
+                                        # Lista final que agrega los trabajos de cada place
+                                        place.JobsFinish.append(job)
                                 text_ = StringVar(
                                     value="__________________________________________________")
                                 label_ = Label(
@@ -274,7 +269,6 @@ class GUI:
                                 x1 = 90
                                 y1 = 155
                                 # Evaluar
-                                id = 0
                                 for thing in place.things:
                                     if thing.type == "optional":
                                         y1 += 30
@@ -287,44 +281,46 @@ class GUI:
                                         labelThingsCost = Label(
                                             screenTK5, textvariable=textThingsCost).place(x=55, y=y1)
                                         # Elementos para realizar nuevos "botones"
-                                        textActivity1 = StringVar(
+                                        textActivity = StringVar(
                                             value=thing.name)
-                                        labelActivity1 = Label(
-                                            screenTK5, textvariable=textActivity1).place(x=5, y=235)
-                                        textActivity2 = StringVar(
-                                            value=thing.name)
-                                        labelActivity2 = Label(
-                                            screenTK5, textvariable=textActivity2).place(x=5, y=255)
-                                        Button(screenTK5, text="OK",
-                                               command=lambda: screenTK5.destroy()).place(x=140, y=325)
+                                        labelActivity = Label(
+                                            screenTK5, textvariable=textActivity).place(x=95, y=y1)
+                                        # Nueva Lista que agrega cada Actividad del place
+                                        place.ActivityFinish.append(thing)
                                         # Evaluar
                                         # Button(screenTK5, text=thing.name, command=lambda: self.getJobs(
                                         # screenTK5, place, id)).place(x=x1, y=y1)
-                                        id += 1
                                 # Inputs necesarios
+                                text = StringVar(
+                                    value="Write the activity that you go to do.")
+                                labelActivity = Label(
+                                    screenTK5, textvariable=text).place(x=10, y=255)
                                 Text1 = Entry(screenTK5,
-                                              textvariable=self.acti1, width=25).place(x=5, y=255)
-                                Text2 = Entry(screenTK5,
-                                              textvariable=self.acti2, width=25).place(x=5, y=295)
-                                if self.acti1 == place.things[0].name:
-                                    print(place.things[0].name)
-                                if self.acti2 == place.things[1].name:
-                                    print(place.things[1].name)
+                                              textvariable=self.acti1, width=40).place(x=10, y=270)
+                                Button(screenTK5, text="OK",
+                                       command=lambda: self.getJobs(screenTK5, place, self.acti1.get())).place(x=115, y=300)
+                                if self.backpacker.getWork():
+                                    text_ = StringVar(
+                                        value="__________________________________________________")
+                                    label_ = Label(
+                                        screenTK5, textvariable=text_).place(x=-10, y=325)
+                                    text2 = StringVar(
+                                        value="If your budget is smaller than 40% write some job")
+                                    labelActivity = Label(
+                                        screenTK5, textvariable=text2).place(x=10, y=340)
+                                    Text2 = Entry(screenTK5,
+                                                  textvariable=self.job1, width=30).place(x=10, y=355)
+                                    Button(screenTK5, text="OK",
+                                           command=lambda: self.getJobs2(screenTK5, place, self.job1.get())).place(x=50, y=385)
+                                self.acti1.set('')
+                                self.job1.set('')
                                 screenTK5.mainloop()
                         self.show = False
                     if cursor.colliderect(button5.rect):
                         self.ini = True
-                        # machetazo
-                        if self.obs:
-                            screenTK6 = Tk()
-                            screenTK6.geometry(
-                                f"180x150+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
-                            screenTK6.title("Alert")
-                            textA = StringVar(
-                                value="Exist a Obstruction")
-                            labelA = Label(
-                                screenTK6, textvariable=textC).place(x=5, y=10)
-                        self.ini = False
+                    # Aqui voy_______________________________________________________
+                    if cursor.colliderect(button6.rect):
+                        pass
                     if self.begin:
                         for place in self.graph.places:
                             if cursor.colliderect(place.rect):
@@ -337,6 +333,7 @@ class GUI:
                             self.MinCost = self.graph.Dijkstra(
                                 self.Nodeinit, True, False, int(self.cost.get()))
                             self.way = self.MinCost
+                            self.destinyin = self.way[0]
                             self.minimunC = True
                             for node in self.way:
                                 if node.status[1] is self.init.label:
@@ -346,6 +343,7 @@ class GUI:
                             self.MinTime = self.graph.Dijkstra(
                                 self.Nodeinit, False, True, int(self.time.get()))
                             self.way = self.MinTime
+                            self.destinyin = self.way[0]
                             self.minimunT = True
                             for node in self.way:
                                 if node.statusT[1] is self.init.label:
@@ -367,21 +365,21 @@ class GUI:
                                     if edge.vertexA is node and edge.vertexB is self.graph.Get_Vertex(node.statusT[1]):
                                         edge.color = (0, 0, 255)
                             self.mintime = False
+                        if self.other:
+                            self.way.clear()
+                            self.minimunO = True
+                            for place in self.graph.places:
+                                if cursor.colliderect(place.rect):
+                                    self.way = self.graph.Dijkstra(
+                                        self.Nodeinit, False, False, place.label)
+                                    self.destinyin = self.way[0]
+                                    for node in self.way:
+                                        if node.statusD[1] is self.init.label:
+                                            self.destiny = node
+                                            break
+                            self.other = False
                         self.ways = False
-                        # estaba en ini pero deja de servir el continue travel
-                    if self.other:
-                        self.way.clear()
-                        self.minimunO = True
-                        for place in self.graph.places:
-                            if cursor.colliderect(place.rect):
-                                self.way = self.graph.Dijkstra(
-                                    self.Nodeinit, False, False, place.label)
-                                for node in self.way:
-                                    if node.statusD[1] is self.init.label:
-                                        self.destiny = node
-                                        break
-
-                        self.other = False
+                        self.ini = True
                     if self.ini:
                         self.MinMoney = True
                         self.ini = False
@@ -404,15 +402,15 @@ class GUI:
                                 Tr3 = transport
                         if T1:
                             Button(screenTK4, text="Airplane",
-                                   command=lambda: self.transportF(screenTK4, Tr1)).place(x=20, y=50)
+                                   command=lambda: self.transportF(screenTK4, Tr1, self.graph.Get_Places(self.init, self.destiny))).place(x=20, y=50)
                         if T2:
                             Button(screenTK4, text="Car",
                                    command=lambda: self.transportF(
-                                       screenTK4, Tr2)).place(x=20, y=100)
+                                       screenTK4, Tr2, self.graph.Get_Places(self.init, self.destiny))).place(x=20, y=100)
                         if T3:
                             Button(screenTK4, text="Donkey",
                                    command=lambda: self.transportF(
-                                       screenTK4, Tr3)).place(x=20, y=150)
+                                       screenTK4, Tr3, self.graph.Get_Places(self.init, self.destiny))).place(x=20, y=150)
                         screenTK4.mainloop()
                         T1 = False
                         T2 = False
@@ -421,7 +419,6 @@ class GUI:
                     pygame.quit()
                     sys.exit()
             self.draw_graph(screen, country, carCrash, fontD, fontP)
-
             if self.MinMoney:
                 self.walk = False
                 status = ''
@@ -443,7 +440,6 @@ class GUI:
                             self.destiny = node
                             break
                     self.MinMoney = False
-                print(self.init.label, self.destiny.label)
                 if self.MinMoney:
                     pos = self.transportMove(self.init, self.destiny, pos)
                 else:
@@ -454,7 +450,7 @@ class GUI:
                 screen.blit(Select, (10, 650))
             if self.other:
                 screen.blit(Select2, (10, 650))
-                self.ini = True
+                self.ways = True
             screen.blit(fontP.render("Current Time:",
                                      True, (0, 0, 0)), (1000, 10))
             screen.blit(fontP.render(
@@ -487,13 +483,14 @@ class GUI:
             if self.mostrar:
                 screen.blit(bolsita, (1130, 55))
                 screen.blit(fontP.render(
-                    f"Money: {self.cost.get()}", True, (0, 0, 0)), (1170, 60))
+                    f"Money: {self.backpacker.money}", True, (0, 0, 0)), (1170, 60))
             cursor.update()
             button1.update(screen, cursor, MinMoneyLabel)
             button2.update(screen, cursor, Obs)
             button3.update(screen, cursor, start)
             button4.update(screen, cursor, Show)
             button5.update(screen, cursor, continueB)
+            button6.update(screen, cursor, Finish)
             pygame.display.update()
 
     def position(self):
@@ -680,20 +677,28 @@ class GUI:
     def start(self, screen, id):
         if id == 1:
             self.mincost = True
+            self.ways = True
         elif id == 2:
             self.mintime = True
+            self.ways = True
         else:
             self.other = True
-            self.begin = False
-            # Estaba en False pero deja de servir el continue travel
-            self.ini = True
+            self.ini = False
         screen.destroy()
 
-    def transportF(self, screen, transport):
+    def transportF(self, screen, transport, way):
         self.form = transport
+        self.backpacker.money -= (self.form.valueByKm * way.value)
         screen.destroy()
 
-    def getJobs(self, screen, place, i):
-        self.JobsToButton.append(place.things[i])
-        print(place.things[i].name)
-        # return JobsToButton
+    def getJobs(self, screen, place, thingname):
+        for thing in place.things:
+            if thing.name == thingname:
+                self.JobsToButton.append(thing)
+                self.backpacker.money -= thing.cost
+
+    def getJobs2(self, screen, place, jobname):
+        for job in place.jobs:
+            if job.name == jobname:
+                self.JobsToButton.append(job)
+                self.backpacker.money += job.gain

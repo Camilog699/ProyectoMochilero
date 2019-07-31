@@ -15,6 +15,8 @@ class Place:
         self.statusD = [inf, None]
         self.status = [inf, None]
         self.statusT = [inf, None]
+        self.jobsFinish = []
+        self.activityFinish = []
         self.rect = Rect(0, 0, 110, 90)
 
     def __eq__(self, place):
