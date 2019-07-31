@@ -435,7 +435,7 @@ class GUI:
                         break 
                 if self.init is not self.destiny and not self.destiny.visit:
                     self.pas = True
-                elif self.destiny:
+                elif self.destiny.visit:
                     self.pas = False
                 if self.init == self.destiny:
                     for node in self.way:
@@ -451,7 +451,7 @@ class GUI:
                     if self.pas:
                         self.MinMoney = False
                 if self.MinMoney:
-                    self.init = True
+                    #self.init = True
                     pos = self.transportMove(self.init, self.destiny, pos)
                 else:
                     self.walk = True
