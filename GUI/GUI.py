@@ -94,6 +94,8 @@ class GUI:
         country = pygame.transform.scale(country, (85, 60))
         image1 = pygame.image.load("Imgs/boton1.png")
         image1 = pygame.transform.scale(image1, (130, 60))
+        image2 = pygame.image.load("Imgs/boton2.png")
+        image2 = pygame.transform.scale(image2, (130, 60))
         carCrash = pygame.image.load("Imgs/carCrash.png")
         carCrash = pygame.transform.scale(carCrash, (100, 40))
         person = pygame.image.load("Imgs/person.png")
@@ -102,12 +104,12 @@ class GUI:
         bolsita = pygame.transform.scale(bolsita, (40, 40))
 
         # Buttons
-        button1 = ButtonP(image1, image1, 40, 40)
-        button2 = ButtonP(image1, image1, 200, 40)
-        button3 = ButtonP(image1, image1, 360, 40)
-        button4 = ButtonP(image1, image1, 40, 100)
-        button5 = ButtonP(image1, image1, 200, 100)
-        button6 = ButtonP(image1, image1, 360, 100)
+        button1 = ButtonP(image1, image2, 40, 40)
+        button2 = ButtonP(image1, image2, 200, 40)
+        button3 = ButtonP(image1, image2, 360, 40)
+        button4 = ButtonP(image1, image2, 40, 100)
+        button5 = ButtonP(image1, image2, 200, 100)
+        button6 = ButtonP(image1, image2, 360, 100)
 
         # main elements
         cursor = Cursor()
@@ -245,7 +247,7 @@ class GUI:
                                         labelJob = Label(
                                             screenTK5, textvariable=textJob).place(x=95, y=y)
                                         # Lista final que agrega los trabajos de cada place
-                                        place.JobsFinish.append(job)
+                                        place.jobsFinish.append(job)
                                 text_ = StringVar(
                                     value="__________________________________________________")
                                 label_ = Label(
@@ -286,7 +288,7 @@ class GUI:
                                         labelActivity = Label(
                                             screenTK5, textvariable=textActivity).place(x=95, y=y1)
                                         # Nueva Lista que agrega cada Actividad del place
-                                        place.ActivityFinish.append(thing)
+                                        place.activityFinish.append(thing)
                                         # Evaluar
                                         # Button(screenTK5, text=thing.name, command=lambda: self.getJobs(
                                         # screenTK5, place, id)).place(x=x1, y=y1)
@@ -311,7 +313,7 @@ class GUI:
                                     Text2 = Entry(screenTK5,
                                                   textvariable=self.job1, width=30).place(x=10, y=355)
                                     Button(screenTK5, text="OK",
-                                           command=lambda: self.getJobs2(screenTK5, place, self.job1.get())).place(x=50, y=385)
+                                           command=lambda: self.getJobs2(screenTK5, place, self.job1.get())).place(x=115, y=385)
                                 self.acti1.set('')
                                 self.job1.set('')
                                 screenTK5.mainloop()
