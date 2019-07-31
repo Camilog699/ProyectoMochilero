@@ -34,7 +34,7 @@ class Algorithms:
         if len(visitPlaces) == len(places):
             return visitPlaces
         for edge in edgesOrigin:
-            if edge.vertexA is placeA:
+            if edge.vertexA is placeA and not edge.obs:
                 temp.append(edge)
                 edges.append(edge)
         for edge in temp:
