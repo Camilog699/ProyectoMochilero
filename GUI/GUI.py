@@ -451,7 +451,6 @@ class GUI:
                     if self.pas:
                         self.MinMoney = False
                 if self.MinMoney:
-                    #self.init = True
                     pos = self.transportMove(self.init, self.destiny, pos)
                 else:
                     self.walk = True
