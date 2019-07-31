@@ -317,7 +317,7 @@
       "jobs": [
         {
           "name": "Clean men",
-          "gain": 40,
+          "gain": 40, 
           "time": 60
         },
         {

@@ -104,6 +104,8 @@ class GUI:
         person = pygame.transform.scale(person, (40, 40))
         bolsita = pygame.image.load("Imgs/money.png")
         bolsita = pygame.transform.scale(bolsita, (40, 40))
+        relojito = pygame.image.load("Imgs/time.png")
+        relojito = pygame.transform.scale(relojito, (40, 40))
 
         # Buttons
         button1 = ButtonP(image1, image2, 40, 40)
@@ -432,7 +434,7 @@ class GUI:
                 for place in self.graph.places:
                     if place.x == pos[0] and place.y == pos[1]:
                         self.init = place
-                        break 
+                        break
                 if self.init is not self.destiny and not self.destiny.visit:
                     self.pas = True
                 elif self.destiny.visit:
@@ -446,6 +448,8 @@ class GUI:
                         elif self.minimunO:
                             status = node.statusD[1]
                         if status is self.init.label:
+                            #Descuento minTimeHere
+                            self.backpacker.time -= node.minTimeHere
                             self.destiny = node
                             break
                     if self.pas:
@@ -461,7 +465,7 @@ class GUI:
             if self.other:
                 screen.blit(Select2, (10, 650))
                 self.ways = True
-            screen.blit(fontP.render("Current Time:",
+            """ screen.blit(fontP.render("Current Time:",
                                      True, (0, 0, 0)), (1000, 10))
             screen.blit(fontP.render(
                 f"{days} days {hour}:{minutes}:{seconds}", True, (0, 0, 0)), (1000, 30))
@@ -489,9 +493,12 @@ class GUI:
             screen.blit(fontP.render("Remaining Time:",
                                      True, (0, 0, 0)), (1170, 10))
             screen.blit(fontP.render(
-                f"{daysR} days  {hourR}:{minutesR}:{secondsR}", True, (0, 0, 0)), (1170, 30))
+                f"{daysR} days  {hourR}:{minutesR}:{secondsR}", True, (0, 0, 0)), (1170, 30))"""
             if self.mostrar:
+                screen.blit(relojito, (1130, 15))
                 screen.blit(bolsita, (1130, 55))
+                screen.blit(fontP.render(
+                    f"Time: {self.backpacker.time}", True, (0, 0, 0)), (1170, 15))
                 screen.blit(fontP.render(
                     f"Money: {self.backpacker.money}", True, (0, 0, 0)), (1170, 60))
             cursor.update()
@@ -699,6 +706,7 @@ class GUI:
     def transportF(self, screen, transport, way):
         self.form = transport
         self.backpacker.money -= (self.form.valueByKm * way.value)
+        self.backpacker.time -= (self.form.timeByKm * way.value)
         screen.destroy()
 
     def getJobs(self, screen, place, thingname):
@@ -706,9 +714,11 @@ class GUI:
             if thing.name == thingname:
                 self.JobsToButton.append(thing)
                 self.backpacker.money -= thing.cost
+                self.backpacker.time -= thing.time
 
     def getJobs2(self, screen, place, jobname):
         for job in place.jobs:
             if job.name == jobname:
                 self.JobsToButton.append(job)
                 self.backpacker.money += job.gain
+                self.backpacker.time -= job.time
