@@ -41,6 +41,8 @@ class GUI:
         self.mostrar = False
         self.minimunO = False
         self.JobsToButton = []
+        self.acti1 = ""
+        self.acti2 = ""
         self.draw()
 
     def screen_size(self):
@@ -229,7 +231,7 @@ class GUI:
                                 pos = (place.x, place.y)
                                 screenTK5 = Tk()
                                 screenTK5.geometry(
-                                    f"280x300+{pos[0]}+{pos[1]}")
+                                    f"280x350+{pos[0]}+{pos[1]}")
                                 screenTK5.title("Info")
                                 textC = StringVar(
                                     value="info to Place:")
@@ -284,14 +286,45 @@ class GUI:
                                             value=thing.cost)
                                         labelThingsCost = Label(
                                             screenTK5, textvariable=textThingsCost).place(x=55, y=y1)
+                                        # Elementos para realizar nuevos "botones"
+                                        textActivity1 = StringVar(
+                                            value=thing.name)
+                                        labelActivity1 = Label(
+                                            screenTK5, textvariable=textActivity1).place(x=5, y=235)
+                                        textActivity2 = StringVar(
+                                            value=thing.name)
+                                        labelActivity2 = Label(
+                                            screenTK5, textvariable=textActivity2).place(x=5, y=255)
+                                        Button(screenTK5, text="OK",
+                                               command=lambda: screenTK5.destroy()).place(x=140, y=325)
                                         # Evaluar
-                                        Button(screenTK5, text=thing.name, command=lambda: self.getJobs(
-                                            screenTK5, place, id)).place(x=x1, y=y1)
+                                        # Button(screenTK5, text=thing.name, command=lambda: self.getJobs(
+                                        # screenTK5, place, id)).place(x=x1, y=y1)
                                         id += 1
+                                # Inputs necesarios
+                                Text1 = Entry(screenTK5,
+                                              textvariable=self.acti1, width=25).place(x=5, y=255)
+                                Text2 = Entry(screenTK5,
+                                              textvariable=self.acti2, width=25).place(x=5, y=295)
+                                if self.acti1 == place.things[0].name:
+                                    print(place.things[0].name)
+                                if self.acti2 == place.things[1].name:
+                                    print(place.things[1].name)
                                 screenTK5.mainloop()
                         self.show = False
                     if cursor.colliderect(button5.rect):
                         self.ini = True
+                        # machetazo
+                        if self.obs:
+                            screenTK6 = Tk()
+                            screenTK6.geometry(
+                                f"180x150+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
+                            screenTK6.title("Alert")
+                            textA = StringVar(
+                                value="Exist a Obstruction")
+                            labelA = Label(
+                                screenTK6, textvariable=textC).place(x=5, y=10)
+                        self.ini = False
                     if self.begin:
                         for place in self.graph.places:
                             if cursor.colliderect(place.rect):
