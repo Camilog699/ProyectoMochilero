@@ -326,7 +326,90 @@ class GUI:
                         self.ini = True
                     # Aqui voy_______________________________________________________
                     if cursor.colliderect(button6.rect):
-                        pass
+                        screenTK6 = Tk()
+                        size = self.screen_size()
+                        screenTK6.geometry(
+                            f"650x650+{int(size[0]/2) - 230}+{int(size[1]/2) - 100}")
+                        screenTK6.title(
+                            "Report")
+                        textT = StringVar(
+                            value="General Report")
+                        labelT = Label(
+                            screenTK6, textvariable=textT).place(x=310, y=10)
+                        text_ = StringVar(
+                            value="_______________________________________________________________________________________________________________________________________________________________________________")
+                        label_ = Label(
+                            screenTK6, textvariable=text_).place(x=-10, y=30)
+                        textPlace = StringVar(
+                            value="City:")
+                        labelPlace = Label(
+                            screenTK6, textvariable=textPlace).place(x=10, y=50)
+                        texttimeT = StringVar(
+                            value="Time to Job:")
+                        labeltimeT = Label(
+                            screenTK6, textvariable=texttimeT).place(x=50, y=50)
+                        textGainT = StringVar(
+                            value="Gain to Job:")
+                        labelGainT = Label(
+                            screenTK6, textvariable=textGainT).place(x=130, y=50)
+                        textJobs = StringVar(
+                            value="Jobs:")
+                        labelJobs = Label(
+                            screenTK6, textvariable=textJobs).place(x=230, y=50)
+                        texttimeT = StringVar(
+                            value="Time to Activity:")
+                        labeltimeT = Label(
+                            screenTK6, textvariable=texttimeT).place(x=300, y=50)
+                        textcostT = StringVar(
+                            value="Cost to Activity:")
+                        labelcostT = Label(
+                            screenTK6, textvariable=textcostT).place(x=450, y=50)
+                        textThings = StringVar(
+                            value="Activity:")
+                        labelThings = Label(
+                            screenTK6, textvariable=textThings).place(x=580, y=50)
+                        text_ = StringVar(
+                            value="__________________________________________________________________________________________________________________________________________________________________________________")
+                        label_ = Label(
+                            screenTK6, textvariable=text_).place(x=-10, y=65)
+                        x = 5
+                        y = 50
+                        for place in self.graph.places:
+                            if place.visit:
+                                y += 30
+                                textp = StringVar(
+                                value=place.name)
+                                labelThings = Label(
+                                    screenTK6, textvariable=textp).place(x=10, y=y)
+                                for job in place.jobsFinish:
+                                    y += 30
+                                    textTi = StringVar(
+                                    value=job.time)
+                                    labelTi = Label(
+                                        screenTK6, textvariable=textTi).place(x=50, y=y)
+                                    textGa = StringVar(
+                                    value=job.gain)
+                                    labelGa = Label(
+                                        screenTK6, textvariable=textGa).place(x=130, y=y)
+                                    textNa = StringVar(
+                                    value=job.name)
+                                    labelNa = Label(
+                                        screenTK6, textvariable=textNa).place(x=230, y=y)
+                                for thing in place.activityFinish:
+                                    y += 30
+                                    textTiT = StringVar(
+                                    value=thing.time)
+                                    labelTiT = Label(
+                                        screenTK6, textvariable=textTiT).place(x=300, y=y)
+                                    textCos = StringVar(
+                                    value=thing.cost)
+                                    labelCos = Label(
+                                        screenTK6, textvariable=textCos).place(x=450, y=y)
+                                    textNom = StringVar(
+                                    value=thing.name)
+                                    labelNom = Label(
+                                        screenTK6, textvariable=textNom).place(x=580, y=y)
+                        screenTK6.mainloop()
                     if self.begin:
                         for place in self.graph.places:
                             if cursor.colliderect(place.rect):
@@ -433,6 +516,7 @@ class GUI:
                 screen.blit(carSelect, pos)
                 for place in self.graph.places:
                     if place.x == pos[0] and place.y == pos[1]:
+                        self.init.visit = True
                         self.init = place
                         break
                 if self.init is not self.destiny and not self.destiny.visit:
@@ -448,7 +532,7 @@ class GUI:
                         elif self.minimunO:
                             status = node.statusD[1]
                         if status is self.init.label:
-                            #Descuento minTimeHere
+                            # Descuento minTimeHere
                             self.backpacker.time -= node.minTimeHere
                             self.destiny = node
                             break
@@ -713,6 +797,7 @@ class GUI:
         for thing in place.things:
             if thing.name == thingname:
                 self.JobsToButton.append(thing)
+                place.activityFinish.append(thing)
                 self.backpacker.money -= thing.cost
                 self.backpacker.time -= thing.time
 
@@ -720,5 +805,6 @@ class GUI:
         for job in place.jobs:
             if job.name == jobname:
                 self.JobsToButton.append(job)
+                place.jobsFinish.append(job)
                 self.backpacker.money += job.gain
                 self.backpacker.time -= job.time
